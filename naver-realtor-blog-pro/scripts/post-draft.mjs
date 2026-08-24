@@ -223,10 +223,15 @@ try {
     let rows = rowsIn;
     if (rows.length > 1 && rows[0].length === 2 && /^(항목|구분)$/.test(rows[0][0]) && /^(내용|값)$/.test(rows[0][1])) rows = rows.slice(1);
     const B = "border:1px solid #d9dde2;padding:8px;";
+    // 표 셀 안의 **볼드**·==하이라이트== 마커도 본문과 똑같이 변환한다
+    // (실측: 변환 없이는 별표가 그대로 보인다)
+    const cell = (t) => esc(t)
+      .replace(/\*\*([^*]+)\*\*/g, '<span style="font-weight:700;">$1</span>')
+      .replace(/==([^=]+)==/g, '<span style="background-color:#fff3b0">$1</span>');
     return '<table style="border-collapse:collapse;width:100%"><colgroup><col style="width:28%"><col style="width:72%"></colgroup><tbody>' +
       rows.map((r) => {
-        const label = `<td style="${B}background-color:#f5f6f8;width:28%"><span style="font-weight:700;">${esc(r[0])}</span></td>`;
-        const rest = r.slice(1).map((c) => `<td style="${B}width:72%">${esc(c)}</td>`).join("");
+        const label = `<td style="${B}background-color:#f5f6f8;width:28%"><span style="font-weight:700;">${cell(r[0])}</span></td>`;
+        const rest = r.slice(1).map((c) => `<td style="${B}width:72%">${cell(c)}</td>`).join("");
         return `<tr>${label}${rest}</tr>`;
       }).join("") + "</tbody></table>";
   };
