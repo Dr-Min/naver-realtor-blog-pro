@@ -90,6 +90,17 @@ number without the banner.
 
 ## Stage 2 — draft
 
+**Settle the photos before writing a word.** If the user gave per-photo
+labels, use them — the owner knows their property best. If photos arrived
+without labels, **look at them yourself**: open each image file with the
+image-viewing tool, and write one line per photo (which space + what is
+visible, e.g. `07.jpg — 내부: 층고 높은 철골 홀, 팔레트 보관`) into
+`<run-dir>/photo-labels.md` before drafting. A photo you cannot confidently
+place gets a conservative label (`내부 공간`) and the draft never asserts
+more than the label says — fact integrity applies to what you see, too.
+These labels are the input that decides the chapters and photo placement
+below; never write the draft first and guess photo positions after.
+
 Write `blog-post.md` on the fixed skeleton — 도입 → *(서술 챕터들)* → 위치 →
 핵심 조건 → 상담 안내 → 태그 — where the 2–4 서술 챕터 in the middle are
 **chosen to fit the listing**, not copied from a template. The photo space
