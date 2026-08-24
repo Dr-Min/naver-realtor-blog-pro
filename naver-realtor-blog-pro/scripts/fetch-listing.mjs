@@ -63,7 +63,8 @@ try {
     await page.waitForTimeout(6000);
     const cur = page.url();
     const body = await page.evaluate(() => document.body.innerText).catch(() => "");
-    if (!/404|agreement/.test(cur) && !body.includes("찾을 수 없습니다")) { landed = {url: cur, body}; break; }
+    // 실측: fin.land 404 문구는 "찾을 수 없어요" — 축약형으로 두 표기를 모두 잡는다
+    if (!/404|agreement/.test(cur) && !/찾을 수 없/.test(body)) { landed = {url: cur, body}; break; }
   }
 
   if (!landed) {
