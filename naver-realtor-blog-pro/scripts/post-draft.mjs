@@ -210,7 +210,17 @@ try {
       // 표는 실제 클립보드에 HTML을 싣고 진짜 단축키로 붙여넣는다.
       // 삽입 후 표 컴포넌트가 실제로 생겼는지 반드시 확인한다 — 이벤트를
       // 던졌다는 것과 표가 생겼다는 것은 다르다(실측으로 배운 것).
-      const html = "<table><tbody>" + op.rows.map((r) => "<tr>" + r.map((c) => `<td>${c}</td>`).join("") + "</tr>").join("") + "</tbody></table>";
+      // 실측으로 확정한 스타일: 보더·첫열 배경/볼드·28:72 폭이 에디터 변환에서 살아남는다.
+      // "항목/내용" 같은 일반 헤더 행은 잡음이라 뺀다.
+      let rows = op.rows;
+      if (rows.length > 1 && rows[0].length === 2 && /^(항목|구분)$/.test(rows[0][0]) && /^(내용|값)$/.test(rows[0][1])) rows = rows.slice(1);
+      const B = "border:1px solid #d9dde2;padding:8px;";
+      const html = '<table style="border-collapse:collapse;width:100%"><colgroup><col style="width:28%"><col style="width:72%"></colgroup><tbody>' +
+        rows.map((r) => {
+          const label = `<td style="${B}background-color:#f5f6f8;width:28%"><b>${r[0]}</b></td>`;
+          const rest = r.slice(1).map((c) => `<td style="${B}width:72%">${c}</td>`).join("");
+          return `<tr>${label}${rest}</tr>`;
+        }).join("") + "</tbody></table>";
       const before = await page.locator(".se-component.se-table").count();
       let tableOk = false;
       try {
