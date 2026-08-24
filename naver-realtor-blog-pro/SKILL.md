@@ -111,10 +111,11 @@ Read [references/transfer-contract.md](references/transfer-contract.md), then:
 node scripts/post-draft.mjs --file <run-dir>/blog-post.md --blog <blogId> --tel <public phone>
 ```
 
-The script logs in from the persistent profile (never from credentials), types
-the draft block-by-block with the tested editor mechanics, pastes the table,
-uploads images one at a time, attaches the map, applies the `tel:` link, runs a
-deterministic pre-save check, clicks only `임시저장`, and returns JSON.
+The script logs in from the persistent profile (never from credentials), pastes
+the whole body as one real-clipboard HTML paste (splitting the paste corrupts
+formatting — measured), inserts photos and the map at placeholder positions,
+applies the `tel:` link, runs a deterministic pre-save check, clicks only
+`임시저장`, and returns JSON.
 
 Interpret the JSON honestly:
 

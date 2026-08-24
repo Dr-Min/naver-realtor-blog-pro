@@ -184,9 +184,12 @@ try {
   // **볼드**와 ==하이라이트==가 있는 문단은 실클립보드 HTML로 붙여 실서식을 만든다
   // (실측: 붙여넣기는 b 태그·배경색 span을 그대로 살린다)
   const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const toHtml = (text) => "<p>" + esc(text)
-    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
-    .replace(/==([^=]+)==/g, '<span style="background-color:#fff3b0">$1</span>') + "</p>";
+  // 일반 문단은 fs15·normal을 명시한다 — 명시가 없으면 변환기가 직전
+  // 소제목(fs19·볼드) 스타일을 다음 문단까지 이어붙인다(실측).
+  const toHtml = (text) => '<p><span style="font-size:15px;">' + esc(text)
+    .replace(/\*\*([^*]+)\*\*/g, '<span style="font-weight:700;">$1</span>')
+    .replace(/==([^=]+)==/g, '<span style="background-color:#fff3b0">$1</span>') + "</span></p>";
+  const BLANK = '<p><span style="font-size:15px;"><br></span></p>';
   const pasteHtml = async (html) => {
     await page.evaluate(async (h) => {
       const item = new ClipboardItem({
@@ -209,139 +212,137 @@ try {
     }
   };
 
+  // ── 단일 페이스트 전송 ──
+  // 본문 텍스트 전체(문단·소제목·표·빈 줄)를 한 번의 실클립보드 페이스트로
+  // 넣는다 (실측: <p> 분리·빈 줄·b·배경색·font-size→se-fs19·표 스타일 보존).
+  // 페이스트를 두 번 이상으로 나누면 안 된다 — 실측: 컴포넌트 삽입 후 두 번째
+  // 페이스트는 저장 시 마지막 소제목 뒤 문단들이 통째로 볼드 오염된다.
+  // 사진·지도는 플레이스홀더 문단을 페이스트에 남기고, 페이스트 뒤 그 자리를
+  // 클릭해 컴포넌트를 삽입한다 (실측: 삽입 위치 정확, 오염 없음).
+  const buildTable = (rowsIn) => {
+    let rows = rowsIn;
+    if (rows.length > 1 && rows[0].length === 2 && /^(항목|구분)$/.test(rows[0][0]) && /^(내용|값)$/.test(rows[0][1])) rows = rows.slice(1);
+    const B = "border:1px solid #d9dde2;padding:8px;";
+    return '<table style="border-collapse:collapse;width:100%"><colgroup><col style="width:28%"><col style="width:72%"></colgroup><tbody>' +
+      rows.map((r) => {
+        const label = `<td style="${B}background-color:#f5f6f8;width:28%"><span style="font-weight:700;">${esc(r[0])}</span></td>`;
+        const rest = r.slice(1).map((c) => `<td style="${B}width:72%">${esc(c)}</td>`).join("");
+        return `<tr>${label}${rest}</tr>`;
+      }).join("") + "</tbody></table>";
+  };
+
+  const buf = [];
+  const comps = [];              // 페이스트 후 삽입할 컴포넌트들 (원고 순서)
+  const fallbackTables = [];
+  let expectedTables = 0;
   for (const op of ops) {
-    if (op.type === "para") { await typePara(op.text); continue; }
-
+    if (op.type === "para") { buf.push(toHtml(op.text), BLANK); continue; }
     if (op.type === "heading") {
-      // 소제목 서식은 베스트에포트 — 실패하면 텍스트로라도 남긴다
-      let styled = false;
-      try {
-        await page.locator('button[data-name="text-style"], button[data-name="paragraph-style"]').first().click({timeout: 1500});
-        styled = await clickIfVisible(page.getByText("소제목", {exact: true}), 1500);
-      } catch { /* fallthrough */ }
-      await page.keyboard.type(op.text, {delay: 6});
-      await page.keyboard.press("Enter");
-      if (styled) {  // 다음 블록은 본문 서식으로 복귀
-        try {
-          await page.locator('button[data-name="text-style"], button[data-name="paragraph-style"]').first().click({timeout: 1500});
-          await clickIfVisible(page.getByText("본문", {exact: true}), 1500);
-        } catch { /* ignore */ }
-      }
-      await page.keyboard.press("Enter");
-      step("heading:" + op.text);
+      buf.push(`<p><span style="font-size:19px;font-weight:700;">${esc(op.text)}</span></p>`, BLANK);
       continue;
     }
-
     if (op.type === "table") {
-      // 표는 실제 클립보드에 HTML을 싣고 진짜 단축키로 붙여넣는다.
-      // 삽입 후 표 컴포넌트가 실제로 생겼는지 반드시 확인한다 — 이벤트를
-      // 던졌다는 것과 표가 생겼다는 것은 다르다(실측으로 배운 것).
-      // 실측으로 확정한 스타일: 보더·첫열 배경/볼드·28:72 폭이 에디터 변환에서 살아남는다.
-      // "항목/내용" 같은 일반 헤더 행은 잡음이라 뺀다.
-      let rows = op.rows;
-      if (rows.length > 1 && rows[0].length === 2 && /^(항목|구분)$/.test(rows[0][0]) && /^(내용|값)$/.test(rows[0][1])) rows = rows.slice(1);
-      const B = "border:1px solid #d9dde2;padding:8px;";
-      const html = '<table style="border-collapse:collapse;width:100%"><colgroup><col style="width:28%"><col style="width:72%"></colgroup><tbody>' +
-        rows.map((r) => {
-          const label = `<td style="${B}background-color:#f5f6f8;width:28%"><b>${r[0]}</b></td>`;
-          const rest = r.slice(1).map((c) => `<td style="${B}width:72%">${c}</td>`).join("");
-          return `<tr>${label}${rest}</tr>`;
-        }).join("") + "</tbody></table>";
-      const before = await page.locator(".se-component.se-table").count();
-      let tableOk = false;
-      try {
-        await page.evaluate(async (tableHtml) => {
-          const item = new ClipboardItem({
-            "text/html": new Blob([tableHtml], {type: "text/html"}),
-            "text/plain": new Blob([tableHtml.replace(/<[^>]+>/g, " ")], {type: "text/plain"})
-          });
-          await navigator.clipboard.write([item]);
-        }, html);
-        await page.keyboard.press("ControlOrMeta+v");
-        await page.locator(".se-component.se-table").nth(before).waitFor({timeout: 7000});
-        tableOk = true;
-      } catch (e) {
-        result.warnings.push("table paste failed (" + String(e.message).slice(0, 60) + "); rows typed as text");
-      }
-      if (!tableOk) {
-        for (const r of op.rows) await typePara("· " + r.join(": "));
-      } else {
-        await resetToBody();
-        await page.keyboard.press("Enter");
-      }
-      step(tableOk ? "table" : "table-fallback");
+      buf.push(buildTable(op.rows), BLANK);
+      expectedTables += 1;
+      fallbackTables.push(op.rows);
       continue;
     }
-
     if (op.type === "image") {
       if (!fs.existsSync(op.file)) continue;
+      const token = `@@IMG:${comps.length + 1}@@`;
+      comps.push({kind: "image", token, op});
+      buf.push(`<p><span style="font-size:15px;">${token}</span></p>`, BLANK);
+      continue;
+    }
+    if (op.type === "map") {
+      const token = `@@MAP:${comps.length + 1}@@`;
+      comps.push({kind: "map", token, op});
+      buf.push(`<p><span style="font-size:15px;">${token}</span></p>`, BLANK);
+    }
+  }
+
+  await pasteHtml(buf.join(""));
+  await page.waitForTimeout(900);
+  if (expectedTables > 0) {
+    try {
+      await page.locator(".se-component.se-table").nth(expectedTables - 1).waitFor({timeout: 8000});
+    } catch {
+      result.warnings.push("table missing after paste; rows typed as text");
+      await resetToBody();
+      await page.keyboard.press("Enter");
+      for (const rows of fallbackTables) for (const r of rows) await typePara("· " + r.join(": "));
+    }
+  }
+  step("paste");
+
+  // 플레이스홀더 자리를 클릭해 줄을 비우고, 그 캐럿 위치에 컴포넌트를 삽입한다.
+  // 위→아래 순서를 지켜야 image_component nth(before) 인덱스가 맞는다.
+  const clickPlaceholder = async (token) => {
+    await page.locator(SEL.body_para).filter({hasText: token}).first().click({timeout: 4000});
+    await page.keyboard.press("Home");
+    await page.keyboard.press("Shift+End");
+    await page.keyboard.press("Delete");
+  };
+
+  for (const c of comps) {
+    if (c.kind === "image") {
       try {
+        await clickPlaceholder(c.token);
         const before = await page.locator(SEL.image_component).count();
         const chooser = page.waitForEvent("filechooser", {timeout: 8000});
         await page.locator(SEL.photo_button).first().click();
-        await (await chooser).setFiles(op.file);
+        await (await chooser).setFiles(c.op.file);
         // 사진 첨부 방식 팝업 → 개별사진 (실측)
         await clickIfVisible(page.getByText("개별사진", {exact: true}), 4000);
-        await page.locator(SEL.image_component).nth(before).waitFor({timeout: 20000});
-        step("image:" + path.basename(op.file));
-        // 캡션: 이미지의 설명 입력칸 우선, 실패하면 다음 블록 텍스트로라도 남긴다
-        let captioned = false;
-        if (op.caption) {
-          const cap = page.locator(".se-component.se-image .se-caption").last();
-          if (await clickIfVisible(cap, 1500)) {
-            await page.keyboard.type(op.caption, {delay: 5});
-            captioned = true;
-          }
+        const comp = page.locator(SEL.image_component).nth(before);
+        await comp.waitFor({timeout: 20000});
+        step("image:" + path.basename(c.op.file));
+        if (c.op.caption) {
+          if (await clickIfVisible(comp.locator(".se-caption").first(), 1500)) {
+            await page.keyboard.type(c.op.caption, {delay: 5});
+          } else result.warnings.push("caption box not found for " + path.basename(c.op.file));
         }
-        // 본문 끝으로 복귀
-        await resetToBody();
-        await page.keyboard.press("Enter");
-        if (op.caption && !captioned) {
-          await typePara(op.caption);
-          result.warnings.push("caption box not found; caption typed as paragraph");
-        }
+        await page.keyboard.press("Escape").catch(() => {});
       } catch (e) {
-        result.warnings.push("image failed (continuing): " + path.basename(op.file) + " — " + String(e.message).slice(0, 80));
+        result.warnings.push("image failed (continuing): " + path.basename(c.op.file) + " — " + String(e.message).slice(0, 80));
+        await page.keyboard.press("Escape").catch(() => {});
       }
       continue;
     }
 
-    if (op.type === "map") {
-      // 지도는 실패해도 저장을 막지 않는다
-      try {
-        await page.getByRole("button", {name: /장소/}).first().click({timeout: 3000});
-        await page.waitForTimeout(1200);
-        // 장소 패널의 검색 입력을 찾는다 — 실패 시 보이는 입력칸 목록을 남겨 다음 수리를 돕는다
-        const visibleInputs = page.locator("input:visible");
-        const n = await visibleInputs.count();
-        let box = null;
-        for (let i = 0; i < n; i += 1) {
-          const ph = (await visibleInputs.nth(i).getAttribute("placeholder")) || "";
-          if (/장소|검색|주소/.test(ph)) { box = visibleInputs.nth(i); break; }
-        }
-        if (!box) {
-          const phs = [];
-          for (let i = 0; i < n; i += 1) phs.push(await visibleInputs.nth(i).getAttribute("placeholder"));
-          throw new Error("place search input not found; visible placeholders: " + phs.join(" / "));
-        }
-        await box.click({timeout: 3000});
-        await box.fill(op.query);
-        await page.keyboard.press("Enter");
-        await page.waitForTimeout(2200);
-        // 실측 순서: 결과 li 클릭 → "추가" → "확인"
-        const popup = page.locator(".se-popup-placesMap");
-        await popup.locator("li").filter({hasText: op.query.split(" ")[0]}).first().click({timeout: 5000});
-        await popup.getByRole("button", {name: "추가", exact: true}).click({timeout: 4000});
-        await popup.getByRole("button", {name: "확인", exact: true}).click({timeout: 4000});
-        await page.locator(SEL.map_component).first().waitFor({timeout: 10000});
-        step("map:" + op.query);
-        await resetToBody();
-        await page.keyboard.press("Enter");
-      } catch (e) {
-        result.warnings.push("map attach failed for '" + op.query + "' — " + String(e.message).slice(0, 120));
-        await resetToBody();
+    // 지도는 실패해도 저장을 막지 않는다
+    try {
+      await clickPlaceholder(c.token);
+      await page.getByRole("button", {name: /장소/}).first().click({timeout: 3000});
+      await page.waitForTimeout(1200);
+      // 장소 패널의 검색 입력을 찾는다 — 실패 시 보이는 입력칸 목록을 남겨 다음 수리를 돕는다
+      const visibleInputs = page.locator("input:visible");
+      const n = await visibleInputs.count();
+      let box = null;
+      for (let i = 0; i < n; i += 1) {
+        const ph = (await visibleInputs.nth(i).getAttribute("placeholder")) || "";
+        if (/장소|검색|주소/.test(ph)) { box = visibleInputs.nth(i); break; }
       }
-      continue;
+      if (!box) {
+        const phs = [];
+        for (let i = 0; i < n; i += 1) phs.push(await visibleInputs.nth(i).getAttribute("placeholder"));
+        throw new Error("place search input not found; visible placeholders: " + phs.join(" / "));
+      }
+      await box.click({timeout: 3000});
+      await box.fill(c.op.query);
+      await page.keyboard.press("Enter");
+      await page.waitForTimeout(2200);
+      // 실측 순서: 결과 li 클릭 → "추가" → "확인"
+      const popup = page.locator(".se-popup-placesMap");
+      await popup.locator("li").filter({hasText: c.op.query.split(" ")[0]}).first().click({timeout: 5000});
+      await popup.getByRole("button", {name: "추가", exact: true}).click({timeout: 4000});
+      await popup.getByRole("button", {name: "확인", exact: true}).click({timeout: 4000});
+      await page.locator(SEL.map_component).first().waitFor({timeout: 10000});
+      step("map:" + c.op.query);
+      await page.keyboard.press("Escape").catch(() => {});
+    } catch (e) {
+      result.warnings.push("map attach failed for '" + c.op.query + "' — " + String(e.message).slice(0, 120));
+      await page.keyboard.press("Escape").catch(() => {});
     }
   }
 
@@ -377,18 +378,19 @@ try {
   // 마지막 두 문단 중 하나라도 있으면 끝까지 들어간 것으로 본다 (해시태그는 칩으로 변환될 수 있음)
   const paras = ops.filter((o) => o.type === "para" && !o.text.startsWith("#"));
   const tail = paras.slice(-2).map((p) => p.text.replace(/\*\*|==/g, "").slice(0, 10));
-  const expectedTables = ops.filter((o) => o.type === "table").length;
   const checks = {
     image_count: {expected: expectedImages, actual: imageCount},
     table_count: {expected: expectedTables, actual: await page.locator(".se-component.se-table").count()},
     map_count: {expected: ops.filter((o) => o.type === "map").length, actual: await page.locator(SEL.map_component).count()},
     tel_link_attached: tel ? (await page.locator('[data-href^="tel:"]').count()) > 0 : null,
     ends_complete: tail.length === 0 || tail.some((t) => bodyText.includes(t)),
+    placeholder_leftover: (bodyText.match(/@@(?:IMG|MAP):\d+@@/g) || []).length,
     publish_dialog_open: await page.getByText("발행 설정").isVisible().catch(() => false)
   };
   result.pre_save_check = checks;
   if (checks.publish_dialog_open) done({status: "FAILED", error: "publish settings unexpectedly open; aborted before save"});
   if (!checks.ends_complete) result.warnings.push("last paragraph not found in editor body");
+  if (checks.placeholder_leftover > 0) result.warnings.push("component placeholder text remains in the body; the draft needs a manual sweep");
 
   // 8) 임시저장만 클릭 — 발행은 어떤 경로로도 누르지 않는다
   const countBefore = await page.locator(SEL.draft_count_button).getAttribute("aria-label").catch(() => null);
