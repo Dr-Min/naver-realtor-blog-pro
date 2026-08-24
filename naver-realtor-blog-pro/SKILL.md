@@ -101,6 +101,16 @@ more than the label says — fact integrity applies to what you see, too.
 These labels are the input that decides the chapters and photo placement
 below; never write the draft first and guess photo positions after.
 
+**Default: use every photo the user handed over.** A folder given without
+instructions means "put these in the post" — listing posts earn trust with
+photos. Similar photos of the same space run **consecutively** after the
+sentence that describes that space (four exterior shots → four image lines
+in a row in the exterior chapter). Drop a photo only when it is effectively
+the same shot again or unusably blurred, and **report every exclusion with
+its reason**. Select a subset only when the user asked for it ("골라 써줘",
+"대표만"). If photo policy is genuinely ambiguous, fold one line into the
+single consolidated Stage 0 question — never a separate pause.
+
 Write `blog-post.md` on the fixed skeleton — 도입 → *(서술 챕터들)* → 위치 →
 핵심 조건 → 상담 안내 → 태그 — where the 2–4 서술 챕터 in the middle are
 **chosen to fit the listing**, not copied from a template. The photo space
