@@ -14,14 +14,21 @@ mechanics did, but in seconds and without tokens:
    then block-by-block typing with a blank block between paragraphs. Bulk
    injection collapses line breaks (measured), so it is never used.
 4. Headings get the real `문단 서식 변경 → 소제목` style, best-effort.
-5. Tables are pasted as HTML through a clipboard event.
+5. Tables go through the real clipboard (`ClipboardItem` with text/html) and
+   a real paste keystroke, then the script verifies a table component actually
+   appeared — dispatching a synthetic paste event looks successful while the
+   editor silently ignores it (measured). On failure the rows are typed as
+   text lines.
 6. Photos upload one at a time through the file chooser, `개별사진` chosen in
    the layout dialog; captions go into the image caption box.
 7. The map is attached with the 장소 tool using the draft's `지도:` anchor;
    any failure is noted and the run continues.
-8. The phone line gets a `tel:` link through the link layer (the editor
-   accepts tel: on text links — measured). The banner image shows the number
-   regardless.
+8. The phone line attempts a `tel:` link through the link layer. Measured
+   behavior: the editor accepts it at apply time but its normalizer may strip
+   the tel: scheme moments later, so the script re-checks `[data-href^="tel:"]`
+   before saving and reports the truth in `pre_save_check.tel_link_attached`.
+   The phone number always remains as visible text, and the CTA banner image
+   carries the number too, so the contact path survives either way.
 9. A deterministic pre-save check (image count, body completeness, no publish
    dialog), then click only `저장`(임시저장). The publish button is never
    targeted by any selector in this script.

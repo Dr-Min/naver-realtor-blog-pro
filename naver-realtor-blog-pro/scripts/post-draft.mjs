@@ -119,6 +119,7 @@ const ctx = await chromium.launchPersistentContext(PROFILE, {
   viewport: {width: 1400, height: 1000},
   args: ["--disable-blink-features=AutomationControlled"]
 });
+await ctx.grantPermissions(["clipboard-read", "clipboard-write"]).catch(() => {});
 const page = ctx.pages()[0] || await ctx.newPage();
 const step = (name) => result.steps.push(name);
 
@@ -206,26 +207,33 @@ try {
     }
 
     if (op.type === "table") {
-      // 표는 클립보드 HTML 붙여넣기 — 스크립트 전송이라 가능한 표현력
+      // 표는 실제 클립보드에 HTML을 싣고 진짜 단축키로 붙여넣는다.
+      // 삽입 후 표 컴포넌트가 실제로 생겼는지 반드시 확인한다 — 이벤트를
+      // 던졌다는 것과 표가 생겼다는 것은 다르다(실측으로 배운 것).
       const html = "<table><tbody>" + op.rows.map((r) => "<tr>" + r.map((c) => `<td>${c}</td>`).join("") + "</tr>").join("") + "</tbody></table>";
-      const pasted = await page.evaluate((tableHtml) => {
-        const target = document.activeElement || document.querySelector(".se-section-text .se-text-paragraph");
-        if (!target) return false;
-        const dt = new DataTransfer();
-        dt.setData("text/html", tableHtml);
-        const ev = new ClipboardEvent("paste", {bubbles: true, cancelable: true});
-        Object.defineProperty(ev, "clipboardData", {value: dt});
-        target.dispatchEvent(ev);
-        return true;
-      }, html).catch(() => false);
-      if (!pasted) {
-        result.warnings.push("table paste failed; fell back to plain rows");
-        for (const r of op.rows) await typePara(r.join(": "));
+      const before = await page.locator(".se-component.se-table").count();
+      let tableOk = false;
+      try {
+        await page.evaluate(async (tableHtml) => {
+          const item = new ClipboardItem({
+            "text/html": new Blob([tableHtml], {type: "text/html"}),
+            "text/plain": new Blob([tableHtml.replace(/<[^>]+>/g, " ")], {type: "text/plain"})
+          });
+          await navigator.clipboard.write([item]);
+        }, html);
+        await page.keyboard.press("ControlOrMeta+v");
+        await page.locator(".se-component.se-table").nth(before).waitFor({timeout: 7000});
+        tableOk = true;
+      } catch (e) {
+        result.warnings.push("table paste failed (" + String(e.message).slice(0, 60) + "); rows typed as text");
+      }
+      if (!tableOk) {
+        for (const r of op.rows) await typePara("· " + r.join(": "));
       } else {
-        await page.waitForTimeout(700);
+        await resetToBody();
         await page.keyboard.press("Enter");
       }
-      step("table");
+      step(tableOk ? "table" : "table-fallback");
       continue;
     }
 
@@ -316,9 +324,13 @@ try {
         el.dispatchEvent(new Event("input", {bubbles: true}));
       }, `tel:${tel.replace(/\s/g, "")}`);
       await page.locator(SEL.link_layer_apply).first().click({timeout: 3000});
+      await page.waitForTimeout(600);
+      // 링크가 실제로 걸렸는지 검증 — 적용 클릭과 적용 성공은 다르다
+      const attached = await page.locator('[data-href^="tel:"]').count();
       await page.keyboard.press("End");
       await page.keyboard.press("Enter");
-      step("tel-link");
+      if (attached > 0) step("tel-link");
+      else result.warnings.push("tel link did not attach; number remains as plain text");
     } catch { result.warnings.push("tel link failed; number still visible as text"); }
   }
 
@@ -329,8 +341,12 @@ try {
   // 마지막 두 문단 중 하나라도 있으면 끝까지 들어간 것으로 본다 (해시태그는 칩으로 변환될 수 있음)
   const paras = ops.filter((o) => o.type === "para" && !o.text.startsWith("#"));
   const tail = paras.slice(-2).map((p) => p.text.slice(0, 10));
+  const expectedTables = ops.filter((o) => o.type === "table").length;
   const checks = {
     image_count: {expected: expectedImages, actual: imageCount},
+    table_count: {expected: expectedTables, actual: await page.locator(".se-component.se-table").count()},
+    map_count: {expected: ops.filter((o) => o.type === "map").length, actual: await page.locator(SEL.map_component).count()},
+    tel_link_attached: tel ? (await page.locator('[data-href^="tel:"]').count()) > 0 : null,
     ends_complete: tail.length === 0 || tail.some((t) => bodyText.includes(t)),
     publish_dialog_open: await page.getByText("발행 설정").isVisible().catch(() => false)
   };
