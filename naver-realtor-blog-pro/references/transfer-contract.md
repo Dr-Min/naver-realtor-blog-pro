@@ -30,13 +30,27 @@ mechanics did, but in seconds and without tokens:
    the layout dialog; captions go into the image caption box, best-effort.
    Map failures are noted and the run continues. A leftover placeholder is
    reported honestly in `pre_save_check.placeholder_leftover`.
-6. The phone line is typed after the paste and linked as `tel:` through the
-   link layer. With the single-paste flow the link survives save and reload
-   (measured) — the earlier "normalizer strips tel:" observation was a
-   side effect of the two-paste corruption. The script still re-checks
-   `[data-href^="tel:"]` before saving and reports the truth in
-   `pre_save_check.tel_link_attached`; the number always remains as visible
-   text and the CTA banner carries it too.
+6. The phone line is typed and tel:-linked **right after the paste, before any
+   component insertion** — the text-link layer and the image-link layer are
+   the same layer, and once it has been used for an image it consumes a
+   selected text line instead of linking it (measured; the line literally
+   vanishes). Hard-won rules, all measured:
+   - Click only `button[data-name="text-link"]`. A name-based fallback like
+     /링크 입력/ also matches the image-link button ("링크 입력 열기").
+   - Wait ~0.9s after Shift+Home for the property toolbar, and ~1.2s after
+     apply for the binding. **Press no key between apply and the check** —
+     an early End/Enter cancels the pending link binding.
+   - Verify with a node count that excludes image components; report the
+     truth in `pre_save_check.tel_link_attached`. If the line vanished during
+     the attempt, retype it as plain text (number visible > number linked).
+   With this sequence the link survives save and reload — the earlier
+   "normalizer strips tel:" observation was a side effect of the two-paste
+   corruption.
+   The CTA banner image also gets the same `tel:` link through the image
+   property toolbar (`data-name="image-link"`, applied during component
+   insertion) — measured: the layer accepts the tel: scheme and the link
+   survives save and reload, so a tap on the banner dials the number after
+   publish. Reported in `pre_save_check.cta_tel_link_attached`.
 7. A deterministic pre-save check (image/table/map counts, body completeness,
    placeholder sweep, no publish dialog), then click only `저장`(임시저장).
    The publish button is never targeted by any selector in this script.

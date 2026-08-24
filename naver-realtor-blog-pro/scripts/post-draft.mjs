@@ -275,6 +275,60 @@ try {
   }
   step("paste");
 
+  // 6) 전화 연결 라인 + tel: 링크 — 반드시 컴포넌트 삽입 전에 한다.
+  // 실측: 이미지 링크 레이어를 한 번 쓰고 나면 같은 링크 레이어가 이미지
+  // 컨텍스트에 물려, 텍스트 링크 적용이 선택된 줄을 삼킨다. 깨끗한 레이어
+  // 상태(페이스트 직후)에서 걸면 링크가 붙고 저장·재열람에도 남는다.
+  if (tel) {
+    try {
+      // 실측: 직전 단계(이미지 링크 등)가 컴포넌트를 선택 상태로 남기면
+      // 타이핑이 통째로 삼켜지고 줄이 생기지 않는다. 선택을 풀고, 줄이
+      // 실제로 생겼는지 확인될 때까지 최대 2회 시도한다.
+      let telLineMade = false;
+      for (let attempt = 0; attempt < 2 && !telLineMade; attempt += 1) {
+        await page.keyboard.press("Escape").catch(() => {});
+        await resetToBody();
+        await page.keyboard.type(`전화 상담: ${tel}`, {delay: 5});
+        await page.waitForTimeout(300);
+        telLineMade = await page.locator(SEL.body_para).filter({hasText: `전화 상담: ${tel}`}).count() > 0;
+      }
+      if (!telLineMade) throw new Error("tel line never appeared in the body");
+      await page.keyboard.press("Shift+Home");
+      await page.waitForTimeout(900);   // 선택 속성 툴바가 뜨는 시간 (실측)
+      // 텍스트 링크 버튼만 쓴다. /링크 입력/ 같은 이름 폴백은 이미지 링크
+      // 버튼("링크 입력 열기")과 매칭돼 선택된 텍스트 줄을 삼킨다 (실측).
+      const textLinkBtn = page.locator('button[data-name="text-link"]');
+      if (await textLinkBtn.count() === 0) throw new Error("text-link button not found");
+      await textLinkBtn.first().click({timeout: 3000});
+      const input = page.locator(SEL.link_layer_input).first();
+      await input.waitFor({timeout: 3000});
+      await input.evaluate((el, value) => {
+        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+        setter.call(el, value);
+        el.dispatchEvent(new Event("input", {bubbles: true}));
+      }, `tel:${tel.replace(/\s/g, "")}`);
+      await page.locator(SEL.link_layer_apply).first().click({timeout: 3000});
+      // 적용 직후 키 입력을 넣지 않는다 — 실측: 바인딩이 끝나기 전의
+      // End/Enter가 링크 적용을 끊는다. 바인딩 완료를 기다렸다가 확인만 한다.
+      await page.waitForTimeout(1200);
+      const attached = await page.evaluate(() =>
+        [...document.querySelectorAll('[data-href^="tel:"]')].filter((n) => !n.closest(".se-component.se-image")).length);
+      if (attached > 0) step("tel-link");
+      else result.warnings.push("tel link did not attach; number remains as plain text");
+    } catch { result.warnings.push("tel link failed; number still visible as text"); }
+
+    // 링크 시도가 어떤 경로로 끝났든, 전화 줄이 본문에 남아 있는지 재확인한다.
+    // 실측: 잘못된 레이어가 선택된 줄을 삼켜 지운 사례가 있다. 사라졌으면
+    // 평문으로 복구한다 — 번호가 보이는 것이 링크보다 우선이다.
+    if (await page.locator(SEL.body_para).filter({hasText: `전화 상담: ${tel}`}).count() === 0) {
+      await page.keyboard.press("Escape").catch(() => {});
+      await resetToBody();
+      await page.keyboard.type(`전화 상담: ${tel}`, {delay: 5});
+      result.warnings.push("tel line was consumed during link attempt; restored as plain text");
+    }
+  }
+
+
   // 플레이스홀더 자리를 클릭해 줄을 비우고, 그 캐럿 위치에 컴포넌트를 삽입한다.
   // 위→아래 순서를 지켜야 image_component nth(before) 인덱스가 맞는다.
   const clickPlaceholder = async (token) => {
@@ -301,6 +355,27 @@ try {
           if (await clickIfVisible(comp.locator(".se-caption").first(), 1500)) {
             await page.keyboard.type(c.op.caption, {delay: 5});
           } else result.warnings.push("caption box not found for " + path.basename(c.op.file));
+        }
+        // CTA 배너는 이미지 자체에도 tel: 링크를 건다 — 실측: 이미지 링크
+        // 레이어(data-name="image-link")가 tel:을 받고 저장·재열람에도 남는다.
+        // 발행 후 모바일에서 배너를 탭하면 바로 전화가 걸린다.
+        if (tel && /cta-banner/i.test(path.basename(c.op.file))) {
+          try {
+            await comp.click();
+            await page.waitForTimeout(600);
+            await page.locator('button[data-name="image-link"]').first().click({timeout: 3000});
+            const linkInput = page.locator(SEL.link_layer_input).first();
+            await linkInput.waitFor({timeout: 3000});
+            await linkInput.evaluate((el, value) => {
+              const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+              setter.call(el, value);
+              el.dispatchEvent(new Event("input", {bubbles: true}));
+            }, `tel:${tel.replace(/\s/g, "")}`);
+            await page.locator(SEL.link_layer_apply).first().click({timeout: 3000});
+            await page.waitForTimeout(600);
+            if (await comp.locator('[class*="link-icon"]').count() > 0) step("image-tel-link");
+            else result.warnings.push("CTA image tel link did not attach; banner stays unlinked");
+          } catch { result.warnings.push("CTA image tel link failed; banner stays unlinked"); }
         }
         await page.keyboard.press("Escape").catch(() => {});
       } catch (e) {
@@ -346,31 +421,6 @@ try {
     }
   }
 
-  // 6) 전화 연결 라인 + tel: 링크 (본문 링크가 tel:을 받는 것은 실측 확인)
-  if (tel) {
-    try {
-      await resetToBody();
-      await page.keyboard.type(`전화 상담: ${tel}`, {delay: 5});
-      await page.keyboard.press("Shift+Home");
-      await page.locator('button[data-name="text-link"]').or(page.getByRole("button", {name: /링크 입력/})).first().click({timeout: 3000});
-      const input = page.locator(SEL.link_layer_input).first();
-      await input.waitFor({timeout: 3000});
-      await input.evaluate((el, value) => {
-        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-        setter.call(el, value);
-        el.dispatchEvent(new Event("input", {bubbles: true}));
-      }, `tel:${tel.replace(/\s/g, "")}`);
-      await page.locator(SEL.link_layer_apply).first().click({timeout: 3000});
-      await page.waitForTimeout(600);
-      // 링크가 실제로 걸렸는지 검증 — 적용 클릭과 적용 성공은 다르다
-      const attached = await page.locator('[data-href^="tel:"]').count();
-      await page.keyboard.press("End");
-      await page.keyboard.press("Enter");
-      if (attached > 0) step("tel-link");
-      else result.warnings.push("tel link did not attach; number remains as plain text");
-    } catch { result.warnings.push("tel link failed; number still visible as text"); }
-  }
-
   // 7) 저장 전 결정론 검사 — 화면 왕복 없이 DOM으로
   await resetToBody();
   const imageCount = await page.locator(SEL.image_component).count();
@@ -382,7 +432,9 @@ try {
     image_count: {expected: expectedImages, actual: imageCount},
     table_count: {expected: expectedTables, actual: await page.locator(".se-component.se-table").count()},
     map_count: {expected: ops.filter((o) => o.type === "map").length, actual: await page.locator(SEL.map_component).count()},
-    tel_link_attached: tel ? (await page.locator('[data-href^="tel:"]').count()) > 0 : null,
+    tel_link_attached: tel ? (await page.evaluate(() => [...document.querySelectorAll('[data-href^="tel:"]')].filter((n) => !n.closest('.se-component.se-image')).length)) > 0 : null,
+    cta_tel_link_attached: tel && comps.some((c) => c.kind === "image" && /cta-banner/i.test(path.basename(c.op.file)))
+      ? (await page.locator('.se-component.se-image [class*="link-icon"]').count()) > 0 : null,
     ends_complete: tail.length === 0 || tail.some((t) => bodyText.includes(t)),
     placeholder_leftover: (bodyText.match(/@@(?:IMG|MAP):\d+@@/g) || []).length,
     publish_dialog_open: await page.getByText("발행 설정").isVisible().catch(() => false)
