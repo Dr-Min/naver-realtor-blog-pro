@@ -111,6 +111,10 @@ Read [references/transfer-contract.md](references/transfer-contract.md), then:
 node scripts/post-draft.mjs --file <run-dir>/blog-post.md --blog <blogId> --tel <public phone>
 ```
 
+`--tel` is not optional when the profile has `office.public_contact` — the
+phone line and its tel: link come only from this flag, never from the draft
+body. Omitting it ships a listing post with no contact path (measured).
+
 The script logs in from the persistent profile (never from credentials), pastes
 the whole body as one real-clipboard HTML paste (splitting the paste corrupts
 formatting — measured), inserts photos and the map at placeholder positions,
@@ -123,10 +127,22 @@ Interpret the JSON honestly:
 - `BLOCKED` + `login_required` — tell the user to run
   `node scripts/login-setup.mjs` and log in once; then rerun the transfer.
 - `UNVERIFIED` — say the click happened but no reliable signal was seen.
-- `FAILED` — read `warnings`/`error`, fix the draft or environment, retry once.
-  If the script cannot work at all (e.g. selectors broken by a Naver update),
-  fall back to the fast skill's agent-driven transfer so the run still ends,
-  and note that `config/selectors.yaml` needs an update.
+- `FAILED` — follow the retry protocol below, in this order, before ending:
+  1. If the browser died at launch (log shows `Crashpad … Permission denied`
+     or the script never reached the editor), that is a sandbox permission
+     problem, not a draft problem. **Re-run the exact same headed command and
+     request execution approval** — an approved headed run works (measured).
+  2. **Never add `--headless`, under any circumstances.** The transfer is a
+     real-clipboard paste that breaks without a focused window, and Naver
+     blocks headless browsers (measured 429). A headless "success" would be
+     a false one.
+  3. If the approved headed retry also fails, paste the script's JSON output
+     **and the full stderr, verbatim and unedited**, into your report, keep
+     the local draft untouched, and end with `FAILED`. Do not summarize the
+     error in your own words instead of quoting it.
+  4. Only if the script itself is broken (e.g. selectors dead after a Naver
+     update): fall back to the fast skill's agent-driven transfer so the run
+     still ends, and note that `config/selectors.yaml` needs an update.
 
 Finish by returning the absolute draft path, the status, image results, and any
 excluded photos or unknown material facts.

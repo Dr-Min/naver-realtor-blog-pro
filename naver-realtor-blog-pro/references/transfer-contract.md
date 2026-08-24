@@ -43,6 +43,11 @@ mechanics did, but in seconds and without tokens:
 8. Success requires a real signal: the saved toast or a draft-count change.
     Otherwise the result is UNVERIFIED, honestly.
 
+Never run this script with `--headless`. The single paste needs a real
+focused window for the clipboard keystroke, and Naver blocks headless
+browsers (measured 429 on fin.land, silent breakage risk in the editor).
+The flag exists only for debugging by a human who accepts a broken result.
+
 All UI selectors live in `config/selectors.yaml`. When Naver changes the
 editor, update that file only. While it is broken, the fast skill's
 agent-driven transfer remains the fallback path.

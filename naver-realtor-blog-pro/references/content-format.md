@@ -22,6 +22,17 @@ script pastes them as real editor tables, which agent typing cannot afford.
 - `![전화 상담 배너](<assets>/cta-banner.png)` — last image before tags.
   The banner shows the phone number in large text, so the CTA works even if
   the tel: link is stripped at publish time.
+- 공용 자산 폴더(`~/.codex/naver-realtor-blog/assets/`)에 쓸 수 없으면
+  배너를 run 폴더에 저장하고 그 경로를 쓴다. 막혔다고 배너를 포기하지 않는다.
+
+## 본문이 하지 말아야 할 것 (실측 실패 사례에서 나온 규칙)
+
+- **전화번호를 본문에 쓰지 않는다.** 전화 상담 줄과 tel: 링크는 전송
+  스크립트가 `--tel`로 붙인다. 본문에 또 쓰면 저장본에 번호가 두 번 나온다
+  (실측). 상담 안내 챕터는 "연락 주시면 …" 같은 문장으로 끝내고 번호는 빼라.
+- **태그에 소제목을 달지 않는다.** `## 태그` 금지. 태그는 문서 마지막에
+  해시태그 한 줄(`#파주창고매매 #상지석동창고 …`)로만 쓴다.
+- 원고에 없는 파일을 이미지로 참조하지 않는다 (Stage 1 규칙과 동일).
 
 ## Voice and restraint
 
