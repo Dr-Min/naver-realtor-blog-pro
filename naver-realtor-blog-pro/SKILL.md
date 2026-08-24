@@ -145,8 +145,12 @@ applies the `tel:` link, runs a deterministic pre-save check, clicks only
 Interpret the JSON honestly:
 
 - `SAVED` — report the draft path and that publishing stays with the human.
-- `BLOCKED` + `login_required` — tell the user to run
-  `node scripts/login-setup.mjs` and log in once; then rerun the transfer.
+- `BLOCKED` + `login_required` — **run `node scripts/login-setup.mjs`
+  yourself**: it opens a browser window and waits (≤5 min) for the human to
+  log in. Tell the user in one line that the window is open and to log in
+  there (`로그인 상태 유지` 체크). The script exits on its own once login is
+  detected — never ask for or handle any credential — then rerun the
+  transfer. The user should not need to type any command.
 - `UNVERIFIED` — say the click happened but no reliable signal was seen.
 - `FAILED` — follow the retry protocol below, in this order, before ending:
   1. If the browser died at launch (log shows `Crashpad … Permission denied`
