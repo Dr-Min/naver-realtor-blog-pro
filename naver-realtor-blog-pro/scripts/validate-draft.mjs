@@ -56,6 +56,13 @@ function isProse(line) {
     !/^```/.test(value);
 }
 
+// pro: 강조 남용 검사 — 조사에서 확인된 과장 글의 공통 신호를 막는다.
+const chapterCount = (text.match(/^##\s/gm) || []).length || 1;
+const boldCount = (text.match(/\*\*[^*]+\*\*/g) || []).length;
+const hlCount = (text.match(/==[^=]+==/g) || []).length;
+if (boldCount > chapterCount) warnings.push(`bold used ${boldCount} times for ${chapterCount} chapters; keep at most one per chapter`);
+if (hlCount > 2) warnings.push(`highlight used ${hlCount} times; keep at most 2 per post`);
+
 // pro: 핵심 조건은 2열 표를 권장한다. 표가 있으면 형식을 검사한다.
 const tableRows = lines.filter((l) => l.trim().startsWith("|"));
 if (tableRows.length > 0) {
@@ -67,7 +74,7 @@ for (let i = 0; i < lines.length; i += 1) {
   const line = lines[i];
   if (!isProse(line)) continue;
 
-  const withoutDecimals = line.replace(/\d+\.\d+/g, "0");
+  const withoutDecimals = line.replace(/\*\*|==/g, "").replace(/\d+\.\d+/g, "0");
   const endings = withoutDecimals.match(/[.!?](?=(?:[\"'”’)]*)?(?:\s|$))/g) || [];
   if (endings.length > 1) errors.push(`line ${i + 1} contains more than one complete sentence`);
   if ([...line.trim()].length > 100) errors.push(`line ${i + 1} exceeds 100 characters`);

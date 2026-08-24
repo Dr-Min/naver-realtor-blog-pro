@@ -181,7 +181,33 @@ try {
   await page.locator(SEL.body_para).last().click({timeout: 2500}).catch(() => {});
 
   // 5) 블록 입력 — 블록 하나 치고 Enter 두 번(빈 줄), 일괄 주입 금지(실측)
-  const typePara = async (text) => { await page.keyboard.type(text, {delay: 4}); await page.keyboard.press("Enter"); await page.keyboard.press("Enter"); };
+  // **볼드**와 ==하이라이트==가 있는 문단은 실클립보드 HTML로 붙여 실서식을 만든다
+  // (실측: 붙여넣기는 b 태그·배경색 span을 그대로 살린다)
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const toHtml = (text) => "<p>" + esc(text)
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/==([^=]+)==/g, '<span style="background-color:#fff3b0">$1</span>') + "</p>";
+  const pasteHtml = async (html) => {
+    await page.evaluate(async (h) => {
+      const item = new ClipboardItem({
+        "text/html": new Blob([h], {type: "text/html"}),
+        "text/plain": new Blob([h.replace(/<[^>]+>/g, "")], {type: "text/plain"})
+      });
+      await navigator.clipboard.write([item]);
+    }, html);
+    await page.keyboard.press("ControlOrMeta+v");
+    await page.waitForTimeout(400);
+  };
+  const typePara = async (text) => {
+    if (/\*\*[^*]+\*\*|==[^=]+==/.test(text)) {
+      await pasteHtml(toHtml(text));
+      await page.keyboard.press("Enter");
+    } else {
+      await page.keyboard.type(text, {delay: 4});
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("Enter");
+    }
+  };
 
   for (const op of ops) {
     if (op.type === "para") { await typePara(op.text); continue; }
@@ -350,7 +376,7 @@ try {
   const bodyText = await page.locator(".se-section-text").allInnerTexts().then((t) => t.join("\n")).catch(() => "");
   // 마지막 두 문단 중 하나라도 있으면 끝까지 들어간 것으로 본다 (해시태그는 칩으로 변환될 수 있음)
   const paras = ops.filter((o) => o.type === "para" && !o.text.startsWith("#"));
-  const tail = paras.slice(-2).map((p) => p.text.slice(0, 10));
+  const tail = paras.slice(-2).map((p) => p.text.replace(/\*\*|==/g, "").slice(0, 10));
   const expectedTables = ops.filter((o) => o.type === "table").length;
   const checks = {
     image_count: {expected: expectedImages, actual: imageCount},

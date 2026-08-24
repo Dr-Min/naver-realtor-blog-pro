@@ -80,10 +80,22 @@ number without the banner.
 
 ## Stage 2 — draft
 
-Write `blog-post.md` with the fast skill's chapter order, plus:
+Write `blog-post.md` on the fixed skeleton — 도입 → *(서술 챕터들)* → 위치 →
+핵심 조건 → 상담 안내 → 태그 — where the 2–4 서술 챕터 in the middle are
+**chosen to fit the listing**, not copied from a template. The photo space
+labels and the property type decide them: a 화장실 photo earns its chapter, a
+listing without a 현관 never gets one. See
+[references/content-format.md](references/content-format.md) for per-type
+starting sets. `핵심 조건` stays directly above `상담 안내`.
+
+Voice: read `style.preset` from the shared profile (담백형 기본, 친근형·정보형
+지원 — same presets as the naver-realtor-blog skill). Then:
 
 - `핵심 조건` as a **2-column markdown table** (`| 항목 | 내용 |`), one verified
   fact per row;
+- inline emphasis where it earns its place: `**bold**` for at most one key fact
+  per chapter, `==highlight==` for at most two phrases in the whole post; no
+  font colors by default;
 - thumbnail as the first image line, photos after the sentences that describe
   the same space, CTA banner image as the last image line before tags;
 - `위치` chapter with `지도: <매물 주소 또는 건물명>` (unit number dropped).
