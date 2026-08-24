@@ -41,6 +41,11 @@ one-line progress note at each stage.
 Read the shared profile first (`scripts/profile.mjs`; office name, realtor
 name, phone, prohibited claims). Missing profile never blocks a run.
 
+When the user supplies office facts the profile lacks (사무소명, 중개사명,
+상담 전화), **edit `~/.codex/naver-realtor-blog/profile.yaml` now** and fill
+those fields, so later runs stop asking. Say so in one line. Do not touch
+fields this skill does not use.
+
 Branch on the input:
 
 - **매물번호** (digits, e.g. 2610279820): run
@@ -64,9 +69,14 @@ specs. Use the Codex `$imagen` skill:
   with the office phone number rendered large, and save it there. Later runs
   reuse the file.
 
-If image generation fails or is unavailable, print the exact generation prompt
-for the user to run elsewhere, note the miss in one line, and continue — images
-never block the run.
+**Copy the images the draft will use into the run folder** (`thumbnail.png`,
+`cta-banner.png`) and reference them with those exact relative names. Before
+writing an image line into the draft, check the file actually exists; a
+reference to a file that was never generated is a silent lie the transfer
+script can only skip. If generation fails, omit that image line, print the
+exact generation prompt for the user, note the miss in one line, and continue —
+images never block the run, and the tel: text line still carries the phone
+number without the banner.
 
 ## Stage 2 — draft
 
