@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>네이버 매물 글, 한 사이클의 전부 — naver-realtor-blog-pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f5f5f5; --paper-2: #fafafa; --ink: #2d3142; --muted: #4f5d75;
+    --soft: #7a8399; --rule: rgba(45,49,66,0.12); --accent: #eb6c36;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: 'Geist', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    padding: 3rem 2rem; max-width: 1600px; margin: 0 auto;
+  }
+  .eyebrow {
+    font-family: 'Geist Mono', monospace; font-size: 0.75rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
+  }
+  h1 { font-family: 'Instrument Serif', 'Apple SD Gothic Neo', serif; font-size: 1.75rem; font-weight: 400; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--muted); font-size: 0.9rem; max-width: 56rem; line-height: 1.6; margin-bottom: 2rem; }
+  .diagram { overflow-x: auto; margin-bottom: 2.5rem; }
+  .diagram svg { min-width: 1200px; }
+
+  .cards { display: grid; grid-template-columns: 1fr 1.1fr 0.9fr; gap: 1rem; margin-bottom: 2.5rem; }
+  .card {
+    background: #ffffff; border: 1px solid var(--rule); border-radius: 6px; padding: 1.25rem;
+  }
+  .card .eyebrow { font-size: 0.65rem; margin-bottom: 0.75rem; }
+  .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .card-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .card-dot.ink { background: var(--ink); } .card-dot.coral { background: var(--accent); }
+  .card-dot.muted { background: var(--muted); }
+  .card h3 { font-size: 0.95rem; font-weight: 600; }
+  .card ul { list-style: none; }
+  .card li { font-size: 0.82rem; color: var(--muted); line-height: 1.7; padding-left: 1rem; position: relative; }
+  .card li::before { content: "—"; position: absolute; left: 0; color: var(--soft); }
+  .card li strong { color: var(--ink); font-weight: 600; }
+
+  .steps { margin-bottom: 2.5rem; }
+  .steps h2 {
+    font-family: 'Instrument Serif', 'Apple SD Gothic Neo', serif; font-size: 1.35rem;
+    font-weight: 400; margin-bottom: 1.5rem;
+  }
+  .phase { margin-bottom: 2rem; }
+  .phase-tag {
+    font-family: 'Geist Mono', monospace; font-size: 0.7rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); border-top: 1px solid var(--rule);
+    padding-top: 0.75rem; margin-bottom: 1rem;
+  }
+  .step { display: grid; grid-template-columns: 3rem 1fr; gap: 0.75rem; margin-bottom: 1.1rem; }
+  .step-no {
+    font-family: 'Geist Mono', monospace; font-size: 0.8rem; font-weight: 600; color: var(--muted);
+    background: rgba(45,49,66,0.06); border-radius: 10px; width: 2.25rem; height: 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-no.focal { background: rgba(235,108,54,0.15); color: var(--accent); }
+  .step h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.75; max-width: 62rem; }
+  .step p strong { color: var(--ink); font-weight: 600; }
+  .aside {
+    font-family: 'Instrument Serif', 'Apple SD Gothic Neo', serif; font-style: italic;
+    font-size: 0.95rem; color: var(--muted); border-left: 2px solid var(--accent);
+    padding-left: 1rem; margin: 1.5rem 0; max-width: 56rem; line-height: 1.7;
+  }
+  footer {
+    border-top: 1px solid var(--rule); padding-top: 1rem; margin-top: 1rem;
+    font-family: 'Geist Mono', monospace; font-size: 0.7rem; color: var(--soft);
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<p class="eyebrow">NAVER-REALTOR-BLOG-PRO · 작동 원리</p>
+<h1>네이버 매물 글, 한 사이클의 전부</h1>
+<p class="subtitle">매물 정보를 한 번 알려주면 코덱스 AI가 글과 이미지를 만들고, 전송 프로그램이
+네이버 편집기에 옮겨 임시저장까지 끝냅니다. 아래 그림의 주황색이 이 도구가 멈추는 지점입니다 —
+<strong>발행 버튼은 끝까지 사람 몫</strong>입니다.</p>
+
+<div class="diagram">
+<svg viewBox="0 0 1512 456" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pro-flow-title pro-flow-desc">
+<title id="pro-flow-title">naver-realtor-blog-pro 한 사이클: 입력부터 임시저장, 발행까지</title>
+<desc id="pro-flow-desc">사장님이 매물 정보를 알려주면 코덱스 AI가 사무소 정보를 기억하고 이미지와 원고를 만들어 검사하며, 전송 프로그램이 로그인 확인부터 본문 붙여넣기·사진·지도·전화 링크·저장 전 검사를 거쳐 네이버에 임시저장하고, 발행은 사장님이 직접 하는 12단계 흐름.</desc>
+<defs>
+  <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+    <circle cx="11" cy="11" r="0.8" fill="rgba(45,49,66,0.10)"/>
+  </pattern>
+  <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+  <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+  <marker id="arrow-sm" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#4f5d75"/></marker>
+</defs>
+
+<rect width="1512" height="456" fill="#f5f5f5"/>
+<rect width="1512" height="456" fill="url(#dots)" opacity="0.55"/>
+
+<!-- 레인 줄무늬 (홀수 레인 틴트) -->
+<rect x="140" y="36" width="1372" height="80" fill="rgba(45,49,66,0.018)"/>
+<rect x="140" y="196" width="1372" height="80" fill="rgba(45,49,66,0.018)"/>
+
+<!-- 레인 구분선 -->
+<line x1="0" y1="36" x2="1512" y2="36" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+<line x1="0" y1="116" x2="1512" y2="116" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+<line x1="0" y1="196" x2="1512" y2="196" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+<line x1="0" y1="276" x2="1512" y2="276" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+<line x1="0" y1="356" x2="1512" y2="356" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+<line x1="140" y1="36" x2="140" y2="356" stroke="rgba(45,49,66,0.20)" stroke-width="1"/>
+
+<!-- 단계 헤더 칩 + 라벨 -->
+<rect x="190" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="198" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+<text x="198" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">입력</text>
+<rect x="302" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="310" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">2</text>
+<text x="310" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">기억</text>
+<rect x="414" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="422" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">3</text>
+<text x="422" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">이미지</text>
+<rect x="526" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="534" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">4</text>
+<text x="534" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">원고</text>
+<rect x="638" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="646" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">5</text>
+<text x="646" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">검사</text>
+<rect x="750" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="758" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">6</text>
+<text x="758" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">로그인</text>
+<rect x="862" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="870" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">7</text>
+<text x="870" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">본문</text>
+<rect x="974" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="982" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">8</text>
+<text x="982" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">사진·지도</text>
+<rect x="1086" y="8" width="16" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="1094" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">9</text>
+<text x="1094" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">전화</text>
+<rect x="1196" y="8" width="20" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="1206" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">10</text>
+<text x="1206" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">재검사</text>
+<rect x="1308" y="8" width="20" height="16" rx="8" fill="rgba(235,108,54,0.20)"/>
+<text x="1318" y="19" fill="#eb6c36" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">11</text>
+<text x="1318" y="32" fill="#eb6c36" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">임시저장</text>
+<rect x="1420" y="8" width="20" height="16" rx="8" fill="rgba(45,49,66,0.12)"/>
+<text x="1430" y="19" fill="#2d3142" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">12</text>
+<text x="1430" y="32" fill="#4f5d75" font-size="6" font-weight="500" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.12em" text-anchor="middle">발행</text>
+
+<!-- 레인 라벨 -->
+<text x="70" y="80" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.08em" text-anchor="middle">사장님</text>
+<text x="70" y="160" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.08em" text-anchor="middle">코덱스 AI</text>
+<text x="70" y="232" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.08em" text-anchor="middle">전송</text>
+<text x="70" y="240" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.08em" text-anchor="middle" dy="8">프로그램</text>
+<text x="70" y="312" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.08em" text-anchor="middle">네이버</text>
+<text x="70" y="320" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.08em" text-anchor="middle" dy="8">블로그</text>
+
+<!-- 화살표 (노드보다 먼저) -->
+<path d="M 248,76 H 302 Q 310,76 310,84 V 124" fill="none" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="360" y1="156" x2="372" y2="156" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="472" y1="156" x2="484" y2="156" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="584" y1="156" x2="596" y2="156" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<path d="M 696,156 H 750 Q 758,156 758,164 V 204" fill="none" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="808" y1="236" x2="820" y2="236" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="920" y1="236" x2="932" y2="236" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="1032" y1="236" x2="1044" y2="236" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="1144" y1="236" x2="1156" y2="236" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<path d="M 1256,236 H 1310 Q 1318,236 1318,244 V 284" fill="none" stroke="#eb6c36" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+<path d="M 1368,316 H 1422 Q 1430,316 1430,308 V 108" fill="none" stroke="#eb6c36" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+
+<!-- 1. 매물 알려주기 · 사장님 -->
+<rect x="148" y="44" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="148" y="44" width="100" height="64" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.25)" stroke-width="1"/>
+<rect x="152" y="48" width="14" height="10" rx="2" fill="rgba(45,49,66,0.10)"/>
+<text x="159" y="56" fill="#4f5d75" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">YOU</text>
+<text x="198" y="70" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">매물 알려주기</text>
+<text x="198" y="84" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">번호·설명·사진</text>
+<text x="198" y="96" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">말로 해도 됨</text>
+<rect x="228" y="98" width="16" height="8" rx="2" fill="#7c8f6f"/>
+<text x="236" y="104" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">LS</text>
+
+<!-- 2. 사무소 기억 · AI -->
+<rect x="260" y="124" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="260" y="124" width="100" height="64" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.25)" stroke-width="1"/>
+<rect x="264" y="128" width="14" height="10" rx="2" fill="rgba(45,49,66,0.10)"/>
+<text x="271" y="136" fill="#4f5d75" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">AI</text>
+<text x="310" y="150" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">사무소 기억</text>
+<text x="310" y="164" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">이름·전화 1회만</text>
+<text x="310" y="176" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', monospace" text-anchor="middle">profile.yaml</text>
+<rect x="264" y="178" width="16" height="8" rx="2" fill="#7c8f6f"/>
+<text x="272" y="184" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">LS</text>
+<rect x="340" y="178" width="16" height="8" rx="2" fill="#7c8f6f"/>
+<text x="348" y="184" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">LS</text>
+
+<!-- 3. 이미지 제작 · AI -->
+<rect x="372" y="124" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="372" y="124" width="100" height="64" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.25)" stroke-width="1"/>
+<rect x="376" y="128" width="14" height="10" rx="2" fill="rgba(45,49,66,0.10)"/>
+<text x="383" y="136" fill="#4f5d75" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">AI</text>
+<text x="422" y="150" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">이미지 제작</text>
+<text x="422" y="164" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">썸네일·전화 배너</text>
+<text x="422" y="176" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', monospace" text-anchor="middle">imagen</text>
+<rect x="376" y="178" width="16" height="8" rx="2" fill="#7c8f6f"/>
+<text x="384" y="184" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">LS</text>
+<rect x="452" y="178" width="16" height="8" rx="2" fill="#9c6b50"/>
+<text x="460" y="184" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">FL</text>
+
+<!-- 4. 원고 작성 · AI -->
+<rect x="484" y="124" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="484" y="124" width="100" height="64" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.25)" stroke-width="1"/>
+<rect x="488" y="128" width="14" height="10" rx="2" fill="rgba(45,49,66,0.10)"/>
+<text x="495" y="136" fill="#4f5d75" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">AI</text>
+<text x="534" y="150" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">원고 작성</text>
+<text x="534" y="164" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">맞춤 챕터·표·강조</text>
+<text x="534" y="176" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', monospace" text-anchor="middle">blog-post.md</text>
+<rect x="488" y="178" width="16" height="8" rx="2" fill="#9c6b50"/>
+<text x="496" y="184" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">FL</text>
+<rect x="564" y="178" width="16" height="8" rx="2" fill="#9c6b50"/>
+<text x="572" y="184" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">FL</text>
+
+<!-- 5. 원고 검사 · AI -->
+<rect x="596" y="124" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="596" y="124" width="100" height="64" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.25)" stroke-width="1"/>
+<rect x="600" y="128" width="14" height="10" rx="2" fill="rgba(45,49,66,0.10)"/>
+<text x="607" y="136" fill="#4f5d75" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">AI</text>
+<text x="646" y="150" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">원고 검사</text>
+<text x="646" y="164" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">지어낸 사실 차단</text>
+<text x="646" y="176" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', monospace" text-anchor="middle">validate</text>
+<rect x="600" y="178" width="16" height="8" rx="2" fill="#9c6b50"/>
+<text x="608" y="184" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">FL</text>
+<rect x="676" y="178" width="16" height="8" rx="2" fill="#9c6b50"/>
+<text x="684" y="184" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">FL</text>
+
+<!-- 6. 로그인 확인 · BOT (rust-red: 보안) -->
+<rect x="708" y="204" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="708" y="204" width="100" height="64" rx="6" fill="rgba(184,84,80,0.06)" stroke="rgba(184,84,80,0.35)" stroke-width="1"/>
+<rect x="712" y="208" width="14" height="10" rx="2" fill="rgba(184,84,80,0.18)"/>
+<text x="719" y="216" fill="#b85450" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">BOT</text>
+<text x="758" y="230" fill="#b85450" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">로그인 확인</text>
+<text x="758" y="244" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">저장된 세션만 사용</text>
+<text x="758" y="256" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">비밀번호 안 받음</text>
+
+<!-- 7. 본문 붙여넣기 · BOT -->
+<rect x="820" y="204" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="820" y="204" width="100" height="64" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.25)" stroke-width="1"/>
+<rect x="824" y="208" width="14" height="10" rx="2" fill="rgba(45,49,66,0.10)"/>
+<text x="831" y="216" fill="#4f5d75" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">BOT</text>
+<text x="870" y="230" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">본문 붙여넣기</text>
+<text x="870" y="244" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">글 전체를 한 번에</text>
+<text x="870" y="256" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">표·굵기 그대로</text>
+<rect x="824" y="258" width="16" height="8" rx="2" fill="#9c6b50"/>
+<text x="832" y="264" fill="#ffffff" font-size="5" font-weight="700" font-family="'Geist Mono', monospace" text-anchor="middle">FL</text>
+
+<!-- 8. 사진·지도 삽입 · BOT -->
+<rect x="932" y="204" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="932" y="204" width="100" height="64" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.25)" stroke-width="1"/>
+<rect x="936" y="208" width="14" height="10" rx="2" fill="rgba(45,49,66,0.10)"/>
+<text x="943" y="216" fill="#4f5d75" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">BOT</text>
+<text x="982" y="230" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">사진·지도 삽입</text>
+<text x="982" y="244" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">예약된 자리마다</text>
+<text x="982" y="256" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">문장 옆에 그 사진</text>
+
+<!-- 9. 전화 링크 · BOT -->
+<rect x="1044" y="204" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="1044" y="204" width="100" height="64" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.25)" stroke-width="1"/>
+<rect x="1048" y="208" width="14" height="10" rx="2" fill="rgba(45,49,66,0.10)"/>
+<text x="1055" y="216" fill="#4f5d75" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">BOT</text>
+<text x="1094" y="230" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">전화 링크</text>
+<text x="1094" y="244" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">글·배너 탭 → 전화</text>
+<text x="1094" y="256" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', monospace" text-anchor="middle">tel: link</text>
+
+<!-- 10. 저장 전 검사 · BOT (slate-blue: 품질) -->
+<rect x="1156" y="204" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="1156" y="204" width="100" height="64" rx="6" fill="rgba(90,125,154,0.06)" stroke="rgba(90,125,154,0.35)" stroke-width="1"/>
+<rect x="1160" y="208" width="14" height="10" rx="2" fill="rgba(90,125,154,0.18)"/>
+<text x="1167" y="216" fill="#5a7d9a" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">BOT</text>
+<text x="1206" y="230" fill="#5a7d9a" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">저장 전 검사</text>
+<text x="1206" y="244" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">사진·표·지도 개수</text>
+<text x="1206" y="256" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">전부 대조</text>
+
+<!-- 11. 임시저장 · 네이버 (focal) -->
+<rect x="1268" y="284" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="1268" y="284" width="100" height="64" rx="6" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1.2"/>
+<rect x="1272" y="288" width="14" height="10" rx="2" fill="rgba(235,108,54,0.18)"/>
+<text x="1279" y="296" fill="#eb6c36" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">NVR</text>
+<text x="1318" y="310" fill="#2d3142" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">임시저장</text>
+<text x="1318" y="324" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">발행 버튼 안 누름</text>
+<text x="1318" y="336" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">저장 증거 확인</text>
+
+<!-- 12. 발행은 사람이 · 사장님 (olive-green: 공개) -->
+<rect x="1380" y="44" width="100" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="1380" y="44" width="100" height="64" rx="6" fill="rgba(122,140,71,0.06)" stroke="rgba(122,140,71,0.35)" stroke-width="1"/>
+<rect x="1384" y="48" width="14" height="10" rx="2" fill="rgba(122,140,71,0.18)"/>
+<text x="1391" y="56" fill="#7a8c47" font-size="6" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">YOU</text>
+<text x="1430" y="70" fill="#7a8c47" font-size="9" font-weight="600" font-family="'Geist', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">발행은 사람이</text>
+<text x="1430" y="84" fill="#4f5d75" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">읽고, 고치고, 결정</text>
+<text x="1430" y="96" fill="#7a8399" font-size="6.5" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" text-anchor="middle">네이버 앱·PC</text>
+
+<!-- 범례 -->
+<text x="144" y="376" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.14em">자료 형태</text>
+<rect x="240" y="368" width="16" height="8" rx="2" fill="#7c8f6f"/>
+<text x="264" y="376" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace">매물 정보</text>
+<rect x="344" y="368" width="16" height="8" rx="2" fill="#9c6b50"/>
+<text x="368" y="376" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace">원고·이미지 파일</text>
+<text x="520" y="376" fill="#7a8399" font-size="7" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace">왼쪽 칩 = 들어오는 것 · 오른쪽 칩 = 나가는 것</text>
+
+<text x="144" y="400" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.14em">색의 의미</text>
+<rect x="240" y="392" width="12" height="8" rx="2" fill="rgba(184,84,80,0.18)" stroke="rgba(184,84,80,0.5)" stroke-width="0.8"/>
+<text x="260" y="400" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace">보안 — 비밀번호를 다루지 않음</text>
+<rect x="480" y="392" width="12" height="8" rx="2" fill="rgba(90,125,154,0.18)" stroke="rgba(90,125,154,0.5)" stroke-width="0.8"/>
+<text x="500" y="400" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace">품질 검사 — 쓴 것을 다시 셈</text>
+<rect x="700" y="392" width="12" height="8" rx="2" fill="rgba(122,140,71,0.18)" stroke="rgba(122,140,71,0.5)" stroke-width="0.8"/>
+<text x="720" y="400" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace">공개 결정 — 사람만 함</text>
+
+<text x="144" y="424" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace" letter-spacing="0.14em">흐름</text>
+<line x1="240" y1="420" x2="280" y2="420" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="292" y="424" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace">다음 단계로</text>
+<line x1="400" y1="420" x2="440" y2="420" stroke="#eb6c36" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+<text x="452" y="424" fill="#4f5d75" font-size="8" font-family="'Geist Mono', 'Apple SD Gothic Neo', monospace">핵심 구간 — 저장까지만, 발행은 사람에게</text>
+</svg>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <p class="eyebrow">딱 한 번만 하면 되는 것</p>
+    <div class="card-header"><span class="card-dot ink"></span><h3>준비물</h3></div>
+    <ul>
+      <li><strong>네이버 로그인 1회</strong> — 도구가 띄운 창에서 직접 로그인하면 약 2주간 유지됩니다.</li>
+      <li><strong>사무소 정보 1회</strong> — 사무소명·성함·전화를 한 번 말하면 자동으로 기억해 다시 묻지 않습니다.</li>
+      <li>전화 배너 이미지도 한 번 만들면 계속 다시 씁니다.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <p class="eyebrow">매물마다 AI가 하는 것</p>
+    <div class="card-header"><span class="card-dot muted"></span><h3>글과 이미지</h3></div>
+    <ul>
+      <li>매물 종류에 맞는 <strong>챕터 구성</strong> — 창고면 물류·층고, 원룸이면 옵션·동선. 없는 공간은 챕터도 안 만듭니다.</li>
+      <li>썸네일과 전화 배너를 <strong>새로 그려서</strong> 넣습니다.</li>
+      <li>말하지 않은 사실은 <strong>지어내지 않습니다</strong> — 모르는 값은 비우거나 "확인 필요"로 씁니다.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <p class="eyebrow">끝까지 사람 몫인 것</p>
+    <div class="card-header"><span class="card-dot coral"></span><h3>발행 결정</h3></div>
+    <ul>
+      <li>도구는 <strong>임시저장 버튼만</strong> 누릅니다. 발행 버튼을 누르는 코드는 아예 없습니다.</li>
+      <li>비밀번호·인증번호는 <strong>절대 묻지도, 저장하지도</strong> 않습니다.</li>
+      <li>임시저장된 글은 삭제하지 않습니다 — 정리도 사람 몫입니다.</li>
+    </ul>
+  </div>
+</div>
+
+<section class="steps">
+  <h2>단계별로 무슨 일이 일어나나요</h2>
+
+  <div class="phase">
+    <p class="phase-tag">① 준비 — 사장님과 AI의 대화 (1–5단계)</p>
+    <div class="step"><span class="step-no">1</span><div><h4>매물 알려주기</h4>
+      <p>매물번호가 있으면 번호만, 없으면 <strong>말로 설명</strong>해도 됩니다. "파주에 창고 하나 있는데 매매 23억, 180평, 층고 8.5미터…" 정도면 충분하고, 현장 사진 폴더가 있으면 같이 알려줍니다. 부족한 정보가 있으면 AI가 <strong>한 번에 모아서</strong> 되묻습니다 — 단계마다 계속 묻지 않습니다.</p></div></div>
+    <div class="step"><span class="step-no">2</span><div><h4>사무소 기억</h4>
+      <p>사무소명·중개사 성함·상담 전화를 처음 한 번 말하면 AI가 설정 파일에 <strong>바로 적어둡니다</strong>. 다음 매물부터는 "지난번이랑 같아"라고만 해도 알아서 찾아 씁니다. 이 정보는 글의 썸네일·배너·전화 링크에 쓰입니다.</p></div></div>
+    <div class="step"><span class="step-no">3</span><div><h4>이미지 제작</h4>
+      <p>글 맨 위에 들어갈 <strong>썸네일</strong>(매물명 + 사무소명이 크게 박힌 정사각형 이미지)과, 글 맨 아래에 들어갈 <strong>전화 상담 배너</strong>(전화번호가 큼직한 가로 이미지)를 AI가 그립니다. 배너는 한 번 만들면 다음 글부터 재사용합니다. 이미지 생성이 실패해도 글쓰기는 멈추지 않습니다.</p></div></div>
+    <div class="step"><span class="step-no">4</span><div><h4>원고 작성</h4>
+      <p>제목 → 도입 → <strong>매물에 맞는 서술 챕터 2~4개</strong> → 위치(지도 자리) → 핵심 조건 표 → 상담 안내 → 태그 순서로 원고 파일을 만듭니다. 사진이 있는 공간만 챕터가 됩니다 — 화장실 사진이 있으면 화장실 문단이 생기고, 현관이 없는 매물엔 현관 챕터가 안 생깁니다. 보증금·면적 같은 핵심 사실은 <strong>2열 표</strong>로 정리하고, 가격 같은 중요한 값 한두 곳만 굵게 표시합니다.</p></div></div>
+    <div class="step"><span class="step-no">5</span><div><h4>원고 검사</h4>
+      <p>사람이 아니라 <strong>검사 프로그램</strong>이 원고를 다시 봅니다. 한 줄에 문장 하나인지, 검색량·순위 같은 <strong>근거 없는 주장</strong>이 섞이지 않았는지, 지도 표시할 위치가 적혔는지, 강조를 남발하지 않았는지 기계적으로 확인합니다. 걸리면 고치고 다시 검사한 뒤에야 다음으로 넘어갑니다.</p></div></div>
+  </div>
+
+  <div class="phase">
+    <p class="phase-tag">② 전송 — 프로그램이 네이버 편집기에서 (6–11단계)</p>
+    <div class="step"><span class="step-no">6</span><div><h4>로그인 확인</h4>
+      <p>전송 프로그램이 브라우저 창을 열고 <strong>저장된 로그인 상태</strong>를 확인합니다. 처음 한 번 사장님이 직접 로그인해두면 약 2주간 그대로 쓰이고, 만료되면 "다시 로그인해 주세요"라고만 알립니다. <strong>아이디·비밀번호를 프로그램에 넘기는 일은 없습니다</strong> — 로그인은 언제나 사람이 브라우저에서 직접 합니다.</p></div></div>
+    <div class="step"><span class="step-no">7</span><div><h4>본문 붙여넣기</h4>
+      <p>제목을 치고, 본문 전체(문단·소제목·표·굵기·형광펜)를 <strong>한 번의 붙여넣기</strong>로 넣습니다. 사람이 복사–붙여넣기 하는 것과 똑같은 방식이라 표 테두리·글자 크기·강조가 그대로 살고, 여러 번 나눠 넣을 때 생기던 글씨 깨짐이 원천 차단됩니다. 이 단계에서 사진과 지도가 들어갈 자리는 <strong>예약석 표시</strong>만 해둡니다.</p></div></div>
+    <div class="step"><span class="step-no">8</span><div><h4>사진·지도 삽입</h4>
+      <p>예약석을 하나씩 찾아가 그 자리에 <strong>진짜 사진을 업로드</strong>하고, 위치 챕터의 예약석에는 네이버 지도(장소 지도)를 붙입니다. 그래서 화장실 얘기 옆에 화장실 사진이, 위치 얘기 아래에 지도가 정확히 놓입니다. 사진 한 장이 실패해도 전체가 멈추지 않고, 빠진 건 마지막에 보고됩니다.</p></div></div>
+    <div class="step"><span class="step-no">9</span><div><h4>전화 링크</h4>
+      <p>글 끝에 "전화 상담: 010-XXXX-XXXX" 줄을 만들어 <strong>누르면 전화가 걸리는 링크</strong>를 달고, 전화 배너 <strong>이미지에도 같은 링크</strong>를 겁니다. 발행 후 휴대폰에서 글을 보다가 글자든 배너든 탭하면 바로 사장님 번호로 전화가 걸립니다.</p></div></div>
+    <div class="step"><span class="step-no">10</span><div><h4>저장 전 검사</h4>
+      <p>저장 버튼을 누르기 전에 프로그램이 <strong>쓴 것을 다시 셉니다</strong> — 사진이 원고에 적힌 수만큼 들어갔는지, 표 1개·지도 1개가 실제로 있는지, 예약석이 안 지워지고 남았는지, 전화 링크가 진짜 걸렸는지. 하나라도 어긋나면 결과 보고서에 정직하게 적힙니다. "됐다고 치는" 일이 없습니다.</p></div></div>
+    <div class="step"><span class="step-no focal">11</span><div><h4>임시저장 — 여기서 멈춥니다</h4>
+      <p>프로그램이 누르는 버튼은 <strong>임시저장 하나뿐</strong>입니다. 발행·예약발행·공개설정을 건드리는 코드는 아예 없습니다. 저장 후에는 임시저장 글 개수가 실제로 하나 늘었는지 <strong>증거를 확인</strong>하고 나서야 "저장 완료"라고 보고합니다. 확인이 안 되면 "저장했는데 확인은 못 했다"라고 그대로 말합니다.</p></div></div>
+  </div>
+
+  <div class="phase">
+    <p class="phase-tag">③ 발행 — 다시 사람에게 (12단계)</p>
+    <div class="step"><span class="step-no">12</span><div><h4>발행은 사람이</h4>
+      <p>네이버 블로그의 임시저장 목록에서 글을 열어 <strong>직접 읽어보고, 고칠 게 있으면 고치고, 발행 버튼을 누릅니다</strong>. 매물 광고는 사장님 이름으로 나가는 글이니, 세상에 공개하는 마지막 결정은 도구가 아니라 사람이 합니다. 발행 후 휴대폰에서 전화 배너를 한 번 탭해보면 전화 연결까지 확인됩니다.</p></div></div>
+  </div>
+
+  <p class="aside">요약하면 — 사장님은 매물을 설명하고(1), 마지막에 발행 버튼을 누릅니다(12).
+  그 사이 열 단계는 도구가 알아서 하되, 지어내지 않고, 비밀번호를 만지지 않고,
+  발행하지 않는다는 세 가지 선은 절대 넘지 않습니다.</p>
+</section>
+
+<footer>NAVER-REALTOR-BLOG-PRO · HOW-IT-WORKS · 2026-08 · 실측 기반</footer>
+
+</body>
+</html>

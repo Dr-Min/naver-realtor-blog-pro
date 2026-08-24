@@ -3,6 +3,17 @@
 [fast 뼈대](https://github.com/Dr-Min/naver-realtor-blog-fast)의 다섯 자리 중
 세 자리를 갈아끼운 확장판입니다.
 
+## 어떻게 돌아가나요 — 한 장 그림
+
+![한 사이클의 전부: 입력부터 임시저장, 발행까지](naver-realtor-blog-pro/docs/how-it-works.png)
+
+사장님은 매물을 설명하고(1단계), 마지막에 발행 버튼을 누릅니다(12단계).
+그 사이 열 단계는 도구가 알아서 하되 **지어내지 않고, 비밀번호를 만지지
+않고, 발행하지 않는다**는 세 가지 선은 절대 넘지 않습니다. 단계마다 무슨
+일이 일어나는지의 상세한 설명은
+[docs/how-it-works.html](naver-realtor-blog-pro/docs/how-it-works.html)에
+있습니다 — 브라우저로 열면 12단계 전부를 비개발자 눈높이로 읽을 수 있습니다.
+
 | 자리 | fast | pro |
 |---|---|---|
 | 입력 | 자연어 매물 사실 | **매물번호(articleNo) 또는 자연어** |
