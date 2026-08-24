@@ -52,6 +52,10 @@ page.on("response", async (res) => {
   }
 });
 
+// 미해결 실측(2026-08-24): 홈에 노출되는 VR 매물의 articleNo는
+// /articles/{no}와 /article/{no} 모두 404였고 /articles/{no}/tour만 열렸다.
+// 일반 매물의 상세 라우트가 다를 수 있다 — 유효한 중개사 매물번호로
+// 재실측해 후보 URL을 갱신할 것. 그때까지 실패 시 자연어 경로가 폴백이다.
 const candidates = [
   `https://fin.land.naver.com/articles/${article}`,
   `https://fin.land.naver.com/article/${article}`

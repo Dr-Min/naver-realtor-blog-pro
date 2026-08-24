@@ -20,7 +20,11 @@ one-line progress note at each stage.
    cookie, or session file, and never store one — login happens once, by the
    human, inside the transfer browser via `scripts/login-setup.mjs`. Work only in surfaces this
    run created, never a tab the user opened. Never publish, schedule, or change
-   visibility. Click only `임시저장`.
+   visibility. Click only `임시저장`. **Never click any 삭제 button anywhere
+   in the blog UI** — 임시저장 목록의 "전체 삭제"는 "선택 삭제"보다 먼저
+   놓여 있어 패턴 매칭 클릭 한 번이 저장글 전부를 지운다 (실사고, 휴지통
+   없음). Draft cleanup is the human's job, always. Never auto-accept a
+   browser confirm dialog either — dismiss is the only allowed response.
 3. **Single source.** The validated local draft is the only source the transfer
    script reads. Never rewrite content during transfer; fix the file,
    revalidate, rerun.
@@ -52,6 +56,12 @@ Branch on the input:
   `node scripts/fetch-listing.mjs --article <no> --out <run-dir> --photos`,
   then read `listing.json` as the fact set. Read
   [references/input-listing.md](references/input-listing.md) first.
+  네이버 매물번호는 보통 10자리다 — 6자리 미만이면 네이버 번호가 아니므로
+  묻지 말고 자연어 경로로 넘어가라 (다른 매물 사이트의 자체 번호일 수
+  있다 — 실측: 돼지부동산.com의 5자리 item 번호).
+- **매물 페이지 URL** (네이버가 아닌 사이트 포함): 그 페이지를 열어
+  게시된 사실과 사진만 수집해 자연어 경로로 처리한다. 페이지에 없는 값은
+  지어내지 않는다 — 사실 무결성 규칙 그대로.
 - **Natural language**: intake exactly as the fast skill does — parse
   everything supplied, one consolidated follow-up at most.
 
@@ -145,4 +155,9 @@ Interpret the JSON honestly:
      still ends, and note that `config/selectors.yaml` needs an update.
 
 Finish by returning the absolute draft path, the status, image results, and any
-excluded photos or unknown material facts.
+excluded photos or unknown material facts. Always include the script's draft
+count evidence (`draft_count_before` → `after`) — that pair is the only proof
+the save was real. If the 임시저장 list already holds a draft with the same
+title (re-runs do this), say so and tell the user how to pick the new one:
+newest saved time, and in this skill's posts the one whose ending carries the
+CTA banner and the linked 전화 상담 line.
