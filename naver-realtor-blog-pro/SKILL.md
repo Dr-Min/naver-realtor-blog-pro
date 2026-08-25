@@ -52,13 +52,18 @@ fields this skill does not use.
 
 Branch on the input:
 
-- **매물번호** (digits, e.g. 2610279820): run
+- **매물번호** (digits, e.g. 2645188091): run
   `node scripts/fetch-listing.mjs --article <no> --out <run-dir> --photos`,
-  then read `listing.json` as the fact set. Read
+  then read `listing.json` as the fact set. The script collects **every
+  gallery photo** via the galleryImages API (measured), not just the cover
+  image — read the output's `photos: {expected, downloaded, failed}` counts
+  and report them as-is; a shortfall is never silently dropped. Read
   [references/input-listing.md](references/input-listing.md) first.
   네이버 매물번호는 보통 10자리다 — 6자리 미만이면 네이버 번호가 아니므로
   묻지 말고 자연어 경로로 넘어가라 (다른 매물 사이트의 자체 번호일 수
-  있다 — 실측: 돼지부동산.com의 5자리 item 번호).
+  있다 — 실측: 돼지부동산.com의 5자리 item 번호). 네이버 지도 공유
+  URL(`fin.land.naver.com/map?...`)에는 매물번호가 없다(실측) — 상세 페이지
+  URL이나 '기본 정보' 표 하단의 매물번호를 한 번만 요청하라.
 - **매물 페이지 URL** (네이버가 아닌 사이트 포함): 그 페이지를 열어
   게시된 사실과 사진만 수집해 자연어 경로로 처리한다. 페이지에 없는 값은
   지어내지 않는다 — 사실 무결성 규칙 그대로.
