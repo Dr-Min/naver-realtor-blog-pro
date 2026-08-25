@@ -88,13 +88,20 @@ try {
     }, 1);
   }
 
-  // 2) 페이지 컨텍스트에서 front-api 3종 GET — 쿠키·헤더가 자동으로 실린다
-  const api = async (p) => page.evaluate(async (u) => {
+  // 2) 페이지 컨텍스트에서 front-api 3종 GET — 쿠키·헤더가 자동으로 실린다.
+  // 일시 오류 대비 1회 재시도.
+  const apiOnce = async (p) => page.evaluate(async (u) => {
     try {
       const r = await fetch(u, {headers: {accept: "application/json"}});
       return {status: r.status, body: await r.json().catch(() => null)};
     } catch (e) { return {status: 0, body: null, error: String(e)}; }
   }, `https://fin.land.naver.com/front-api/v1/${p}`);
+  const api = async (p) => {
+    const first = await apiOnce(p);
+    if (first.status === 200) return first;
+    await page.waitForTimeout(1200);
+    return apiOnce(p);
+  };
 
   const key = await api(`article/key?articleNumber=${article}`);
   // 실측: key 응답은 result.type 아래에 realEstateType·tradeType을 둔다
@@ -116,15 +123,24 @@ try {
     .map((r) => ({url: r.imageUrl, id: r.imageId, representative: Boolean(r.isRepresentative)}));
   let imageSource = "galleryImages_api";
 
+  // 교차 검증: 화면의 "이미지 N개 보기" 숫자와 API 개수를 대조한다
+  const uiCountMatch = bodyText.match(/이미지\s*(\d+)개\s*보기/);
+  const uiCount = uiCountMatch ? Number(uiCountMatch[1]) : null;
+  if (uiCount !== null && images.length && uiCount !== images.length) {
+    warnings.push(`화면 표기 ${uiCount}장 ≠ API ${images.length}장 — 두 값을 보고에 그대로 남길 것`);
+  }
+
   if (!images.length) {
     warnings.push(`galleryImages HTTP ${gallery.status} — DOM 폴백으로 전환`);
     imageSource = "dom_fallback";
     const seen = new Set();
+    // 실측: 원본 URL = 썸네일 URL에서 ?type=m562 파라미터만 뗀 것.
+    // 그래서 (a) 네트워크로 흘러가는 원본을 줍고, (b) 썸네일 src에서
+    // 파라미터를 떼어 원본을 유도한다 — 클릭 순회는 (a)를 채우는 보조.
     page.on("request", (req) => {
       const u = req.url();
       if (/landthumb-phinf\.pstatic\.net/.test(u) && !/\?type=/.test(u)) seen.add(u);
     });
-    // 대표 이미지의 "N개 보기"로 갤러리를 열고 썸네일을 전부 순회한다
     await page.getByRole("button", {name: /이미지\s*\d+개\s*보기|사진/}).first().click({timeout: 4000}).catch(() => {});
     await page.waitForTimeout(1200);
     const thumbs = page.locator(".ivx__index-navigator__item--image");
@@ -133,8 +149,18 @@ try {
       await thumbs.nth(i).click({timeout: 2000}).catch(() => {});
       await page.waitForTimeout(300);
     }
+    const derived = await page.evaluate(() =>
+      [...document.querySelectorAll("img")]
+        .map((i) => i.currentSrc || i.src)
+        .filter((s) => /landthumb-phinf\.pstatic\.net/.test(s))
+        .map((s) => s.split("?")[0])
+    ).catch(() => []);
+    for (const u of derived) seen.add(u);
     images = [...seen].map((u) => ({url: u, id: null, representative: false}));
     if (!images.length) warnings.push("DOM 폴백에서도 사진을 얻지 못했습니다");
+    else if (uiCount !== null && images.length !== uiCount) {
+      warnings.push(`DOM 폴백 수집 ${images.length}장 ≠ 화면 표기 ${uiCount}장`);
+    }
   }
 
   // 4) 다운로드 — 예상 → 저장 → 실패(사유) 카운트를 숨기지 않는다
