@@ -28,7 +28,12 @@ mechanics did, but in seconds and without tokens:
    the component lands exactly at the placeholder position (measured).
    Photos upload one at a time through the file chooser, `개별사진` chosen in
    the layout dialog; captions go into the image caption box, best-effort.
-   Map failures are noted and the run continues. A leftover placeholder is
+   The map search matches results by the **last** word of the anchor (a long
+   address filtered by its first word misses every result — measured) and
+   retries once with the last two words. Whatever happens, the place panel is
+   verified closed before moving on — a leftover open panel intercepts every
+   later click including 저장, silently voiding the save (measured). Map
+   failures are noted and the run continues. A leftover placeholder is
    reported honestly in `pre_save_check.placeholder_leftover`.
 6. The phone line is typed and tel:-linked **right after the paste, before any
    component insertion** — the text-link layer and the image-link layer are

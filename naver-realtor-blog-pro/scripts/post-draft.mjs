@@ -356,10 +356,14 @@ try {
         const comp = page.locator(SEL.image_component).nth(before);
         await comp.waitFor({timeout: 20000});
         step("image:" + path.basename(c.op.file));
-        if (c.op.caption) {
+        if (c.op.caption && !result._captionBoxMissing) {
           if (await clickIfVisible(comp.locator(".se-caption").first(), 1500)) {
             await page.keyboard.type(c.op.caption, {delay: 5});
-          } else result.warnings.push("caption box not found for " + path.basename(c.op.file));
+          } else {
+            // 한 번 못 찾으면 이후에도 못 찾는다(실측) — 경고 한 줄로 끝낸다
+            result._captionBoxMissing = true;
+            result.warnings.push("caption box not found; captions skipped for all images");
+          }
         }
         // CTA 배너는 이미지 자체에도 tel: 링크를 건다 — 실측: 이미지 링크
         // 레이어(data-name="image-link")가 tel:을 받고 저장·재열람에도 남는다.
@@ -412,9 +416,25 @@ try {
       await box.fill(c.op.query);
       await page.keyboard.press("Enter");
       await page.waitForTimeout(2200);
-      // 실측 순서: 결과 li 클릭 → "추가" → "확인"
+      // 실측 순서: 결과 li 클릭 → "추가" → "확인".
+      // 긴 주소("서울시 강남구 …")는 검색이 빗나간다(실측) — 결과가 없으면
+      // 질의를 뒤에서 두 단어(동·건물명 수준)로 줄여 한 번 재검색한다.
       const popup = page.locator(".se-popup-placesMap");
-      await popup.locator("li").filter({hasText: c.op.query.split(" ")[0]}).first().click({timeout: 5000});
+      const pickResult = async (q) => {
+        const needle = q.split(" ").filter(Boolean).slice(-1)[0] || q;
+        await popup.locator("li").filter({hasText: needle}).first().click({timeout: 5000});
+      };
+      try {
+        await pickResult(c.op.query);
+      } catch {
+        const short = c.op.query.split(" ").filter(Boolean).slice(-2).join(" ");
+        if (!short || short === c.op.query) throw new Error("no place result for query");
+        result.warnings.push(`place search retried with shorter query '${short}'`);
+        await box.fill(short);
+        await page.keyboard.press("Enter");
+        await page.waitForTimeout(2200);
+        await pickResult(short);
+      }
       await popup.getByRole("button", {name: "추가", exact: true}).click({timeout: 4000});
       await popup.getByRole("button", {name: "확인", exact: true}).click({timeout: 4000});
       await page.locator(SEL.map_component).first().waitFor({timeout: 10000});
@@ -422,11 +442,32 @@ try {
       await page.keyboard.press("Escape").catch(() => {});
     } catch (e) {
       result.warnings.push("map attach failed for '" + c.op.query + "' — " + String(e.message).slice(0, 120));
-      await page.keyboard.press("Escape").catch(() => {});
+    } finally {
+      // 실측 사고: 실패한 장소 패널이 열린 채 남으면 이후의 플레이스홀더
+      // 클릭과 저장 버튼까지 전부 가로막는다. 어떻게 끝났든 패널이 실제로
+      // 닫혔는지 확인될 때까지 정리한다.
+      for (let t = 0; t < 3; t += 1) {
+        const open = await page.locator(".se-popup-placesMap").isVisible().catch(() => false);
+        if (!open) break;
+        await clickIfVisible(page.locator(".se-popup-placesMap").getByRole("button", {name: /닫기|취소/}), 1500);
+        await page.keyboard.press("Escape").catch(() => {});
+        await page.waitForTimeout(500);
+      }
+      if (await page.locator(".se-popup-placesMap").isVisible().catch(() => false)) {
+        result.warnings.push("place panel could not be closed; later steps may be blocked");
+      }
     }
   }
 
-  // 7) 저장 전 결정론 검사 — 화면 왕복 없이 DOM으로
+  // 7) 저장 전 결정론 검사 — 화면 왕복 없이 DOM으로.
+  // 그 전에 남아 있을 수 있는 팝업·패널을 방어적으로 정리한다 — 실측:
+  // 열린 패널은 저장 버튼 클릭까지 가로채 저장을 조용히 무산시킨다.
+  for (let t = 0; t < 3; t += 1) {
+    const anyPopup = await page.locator(".se-popup-placesMap, .se-custom-layer:visible").first().isVisible().catch(() => false);
+    if (!anyPopup) break;
+    await page.keyboard.press("Escape").catch(() => {});
+    await page.waitForTimeout(400);
+  }
   await resetToBody();
   const imageCount = await page.locator(SEL.image_component).count();
   const bodyText = await page.locator(".se-section-text").allInnerTexts().then((t) => t.join("\n")).catch(() => "");
