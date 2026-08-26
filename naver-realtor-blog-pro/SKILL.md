@@ -164,8 +164,11 @@ Interpret the JSON honestly:
   yourself**: it opens a browser window and waits (≤5 min) for the human to
   log in. Tell the user in one line that the window is open and to log in
   there (`로그인 상태 유지` 체크). The script exits on its own once login is
-  detected — never ask for or handle any credential — then rerun the
-  transfer. The user should not need to type any command.
+  detected, restarts the same browser profile once, and returns `LOGGED_IN`
+  only when the login survives that restart. Never ask for or handle any
+  credential. If it returns `SESSION_NOT_PERSISTED`, reopen it and tell the
+  human to check `로그인 상태 유지`; otherwise rerun the transfer. The user
+  should not need to type any command.
 - `UNVERIFIED` — say the click happened but no reliable signal was seen.
 - `FAILED` — follow the retry protocol below, in this order, before ending:
   1. If the browser died at launch (log shows `Crashpad … Permission denied`

@@ -12,35 +12,56 @@
 import os from "node:os";
 import path from "node:path";
 import {chromium} from "playwright";
+import {hasNaverLoginCookie, verifyLoginPersistence} from "./login-persistence.mjs";
 
 const PROFILE = path.join(os.homedir(), ".codex", "naver-realtor-blog", "browser-profile");
 const TIMEOUT_MS = 5 * 60 * 1000;
-
-const ctx = await chromium.launchPersistentContext(PROFILE, {
+const LAUNCH_OPTIONS = {
   headless: false,
   viewport: {width: 1280, height: 900},
   args: ["--disable-blink-features=AutomationControlled"]
-});
+};
+
+const ctx = await chromium.launchPersistentContext(PROFILE, LAUNCH_OPTIONS);
 const page = ctx.pages()[0] || await ctx.newPage();
 await page.goto("https://nid.naver.com/nidlogin.login", {waitUntil: "domcontentloaded"});
 
 process.stderr.write("브라우저 창에서 네이버에 로그인해 주세요 (로그인 상태 유지 체크 권장). 최대 5분 대기...\n");
 
 const started = Date.now();
-let ok = false;
+let initialLoginDetected = false;
 while (Date.now() - started < TIMEOUT_MS) {
   const cookies = await ctx.cookies("https://naver.com");
-  if (cookies.some((c) => c.name === "NID_AUT")) { ok = true; break; }
+  if (hasNaverLoginCookie(cookies)) { initialLoginDetected = true; break; }
   await page.waitForTimeout(2000);
 }
 
+let persistenceVerified = false;
+if (initialLoginDetected) {
+  process.stderr.write("로그인 유지 여부를 확인하기 위해 브라우저를 한 번 다시 엽니다.\n");
+  persistenceVerified = await verifyLoginPersistence({
+    activeContext: ctx,
+    launchPersistentContext: (profile, options) => chromium.launchPersistentContext(profile, options),
+    profile: PROFILE,
+    launchOptions: LAUNCH_OPTIONS
+  });
+} else {
+  await ctx.close();
+}
+
+const status = persistenceVerified
+  ? "LOGGED_IN"
+  : initialLoginDetected ? "SESSION_NOT_PERSISTED" : "TIMEOUT";
+
 process.stdout.write(JSON.stringify({
-  ok,
+  ok: persistenceVerified,
   profile: PROFILE,
-  status: ok ? "LOGGED_IN" : "TIMEOUT",
-  hint: ok
-    ? "로그인 세션이 프로필에 저장됐습니다. 이제 post-draft.mjs가 재로그인 없이 동작합니다."
-    : "5분 안에 로그인이 확인되지 않았습니다. 다시 실행해 주세요."
+  status,
+  persistence_verified: persistenceVerified,
+  hint: persistenceVerified
+    ? "브라우저 재시작 후에도 로그인이 확인됐습니다. 이제 post-draft.mjs가 재로그인 없이 동작합니다."
+    : initialLoginDetected
+      ? "로그인은 됐지만 브라우저를 닫자 세션이 사라졌습니다. 로그인 상태 유지를 체크한 뒤 다시 실행해 주세요."
+      : "5분 안에 로그인이 확인되지 않았습니다. 다시 실행해 주세요."
 }, null, 2) + "\n");
-await ctx.close();
-process.exit(ok ? 0 : 1);
+process.exit(persistenceVerified ? 0 : 1);

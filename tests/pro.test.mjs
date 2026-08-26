@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import {execFileSync} from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import {pathToFileURL} from "node:url";
 import test from "node:test";
 
 const root = process.cwd();
@@ -13,8 +14,50 @@ test("required bundle files exist", () => {
     "references/transfer-contract.md", "config/selectors.yaml",
     "scripts/profile.mjs", "scripts/init-run.mjs", "scripts/fetch-listing.mjs",
     "scripts/validate-draft.mjs", "scripts/login-setup.mjs",
+    "scripts/login-persistence.mjs",
     "scripts/post-draft.mjs", "scripts/check-core.mjs"
   ]) assert.ok(fs.existsSync(path.join(skillRoot, rel)), rel);
+});
+
+test("login success requires the cookie to survive a browser restart", async () => {
+  const moduleUrl = pathToFileURL(path.join(
+    skillRoot, "scripts/login-persistence.mjs"
+  )).href;
+  const {verifyLoginPersistence} = await import(moduleUrl);
+
+  let activeClosed = false;
+  let verifyClosed = false;
+  const persisted = await verifyLoginPersistence({
+    activeContext: {close: async () => { activeClosed = true; }},
+    launchPersistentContext: async () => {
+      assert.equal(activeClosed, true, "verification must happen after closing the login browser");
+      return {
+        cookies: async () => [{name: "NID_AUT"}],
+        close: async () => { verifyClosed = true; }
+      };
+    },
+    profile: "test-profile",
+    launchOptions: {},
+    settleMs: 0
+  });
+  assert.equal(persisted, true);
+  assert.equal(verifyClosed, true);
+
+  const dropped = await verifyLoginPersistence({
+    activeContext: {close: async () => {}},
+    launchPersistentContext: async () => ({
+      cookies: async () => [],
+      close: async () => {}
+    }),
+    profile: "test-profile",
+    launchOptions: {},
+    settleMs: 0
+  });
+  assert.equal(dropped, false, "a session-only login must not be reported as persistent");
+
+  const setupCode = fs.readFileSync(path.join(skillRoot, "scripts/login-setup.mjs"), "utf8");
+  assert.match(setupCode, /verifyLoginPersistence/);
+  assert.match(setupCode, /persistence_verified/);
 });
 
 test("core contract survives in the pro skill", () => {
