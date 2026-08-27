@@ -10,13 +10,25 @@ const skillRoot = path.join(root, "naver-realtor-blog-pro");
 
 test("required bundle files exist", () => {
   for (const rel of [
-    "SKILL.md", "references/input-listing.md", "references/content-format.md",
+    "SKILL.md", "agents/openai.yaml",
+    "references/input-listing.md", "references/content-format.md",
     "references/transfer-contract.md", "config/selectors.yaml",
     "scripts/profile.mjs", "scripts/init-run.mjs", "scripts/fetch-listing.mjs",
     "scripts/validate-draft.mjs", "scripts/login-setup.mjs",
     "scripts/login-persistence.mjs",
     "scripts/post-draft.mjs", "scripts/check-core.mjs"
   ]) assert.ok(fs.existsSync(path.join(skillRoot, rel)), rel);
+});
+
+test("skill keeps a valid technical name and exposes Korean UI metadata", () => {
+  const skill = fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8");
+  assert.match(skill, /^name: naver-realtor-blog-pro$/m);
+
+  const ui = fs.readFileSync(path.join(skillRoot, "agents/openai.yaml"), "utf8");
+  assert.match(ui, /display_name: "네이버 매물블로그"/);
+  assert.match(ui, /short_description: ".{25,64}"/u);
+  assert.match(ui, /brand_color: "#03C75A"/);
+  assert.match(ui, /default_prompt: ".*\$naver-realtor-blog-pro.*"/);
 });
 
 test("login success requires the cookie to survive a browser restart", async () => {

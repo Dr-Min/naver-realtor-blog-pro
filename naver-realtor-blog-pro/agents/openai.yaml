@@ -1,0 +1,5 @@
+interface:
+  display_name: "네이버 매물블로그"
+  short_description: "매물번호와 사진으로 네이버 블로그 원고를 만들고 임시저장"
+  brand_color: "#03C75A"
+  default_prompt: "$naver-realtor-blog-pro 스킬로 이 매물번호의 네이버 블로그 글을 만들고 임시저장까지만 해줘."

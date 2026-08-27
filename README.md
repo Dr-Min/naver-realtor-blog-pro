@@ -37,11 +37,13 @@
 > 이 깃허브 스킬을 설치해줘: https://github.com/Dr-Min/naver-realtor-blog-pro
 > 적당한 폴더에 받아서 npm install 하고 npx playwright install chromium까지 해줘.
 > 그리고 저장소 안의 naver-realtor-blog-pro 폴더(SKILL.md가 있는 폴더)를
-> 코덱스 스킬 폴더(~/.codex/skills/)에 **매물블로그라는 이름으로** 연결해줘.
-> 끝나면 스킬이 잡히는지 확인해줘.
+> 코덱스 스킬 폴더(~/.codex/skills/naver-realtor-blog-pro)에 링크해줘.
+> 폴더 이름은 바꾸지 말고, 스킬 카드와 Playwright가 둘 다 정상인지 확인해줘.
 
-**성공 확인**: 코덱스에 "매물블로그 스킬 뭐 하는 거야?"라고
-물었을 때 소개가 나오면 설치된 겁니다.
+**성공 확인**: 코덱스 입력창에 `$매물`을 입력했을 때
+`네이버 매물블로그` 카드가 나오면 설치된 겁니다. 한글 표시명은
+`agents/openai.yaml`이, 내부 호출명 `$naver-realtor-blog-pro`는 `SKILL.md`가
+담당합니다.
 
 <details>
 <summary>직접 설치하고 싶다면 (터미널 명령)</summary>
@@ -53,14 +55,20 @@ git clone https://github.com/Dr-Min/naver-realtor-blog-pro.git
 cd naver-realtor-blog-pro
 npm install
 npx playwright install chromium
-# 맥: 스킬 폴더에 연결
-ln -s "$(pwd)/naver-realtor-blog-pro" ~/.codex/skills/매물블로그
-# 윈도우(PowerShell): 복사로 연결
-# Copy-Item -Recurse .\naver-realtor-blog-pro $env:USERPROFILE\.codex\skills\매물블로그
+# macOS/Linux
+ln -s "$(pwd)/naver-realtor-blog-pro" ~/.codex/skills/naver-realtor-blog-pro
 ```
 
-업데이트는 저장소 폴더에서 `git pull` 한 번이면 됩니다 (윈도우 복사 방식은
-복사를 한 번 더).
+윈도우 PowerShell은 복사 대신 정션으로 연결하면 의존성과 업데이트가 함께
+따라옵니다:
+
+```powershell
+New-Item -ItemType Junction `
+  -Path "$env:USERPROFILE\.codex\skills\naver-realtor-blog-pro" `
+  -Target (Resolve-Path .\naver-realtor-blog-pro)
+```
+
+업데이트는 저장소 폴더에서 `git pull` 한 번이면 됩니다.
 
 </details>
 
