@@ -1,5 +1,5 @@
 ---
-name: naver-realtor-blog-pro
+name: 매물블로그
 description: "Use when a Korean realtor wants a Naver Blog listing post produced end-to-end with the least typing: accept either a Naver 부동산 매물번호(articleNo) or natural-language facts, generate a thumbnail and a phone-CTA banner, write a table-formatted mobile/PC-readable draft, and save it as a Naver draft through a deterministic script transfer. Trigger on ‘매물번호 XXXX로 블로그 글 올려줘’, ‘이 매물 블로그 글 만들어서 임시저장까지’, or any fast-skill request that also asks for 썸네일/전화 배너/표. No keyword research or reports; see naver-realtor-blog for that."
 ---
 

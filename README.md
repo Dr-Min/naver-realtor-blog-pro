@@ -37,9 +37,10 @@
 > 이 깃허브 스킬을 설치해줘: https://github.com/Dr-Min/naver-realtor-blog-pro
 > 적당한 폴더에 받아서 npm install 하고 npx playwright install chromium까지 해줘.
 > 그리고 저장소 안의 naver-realtor-blog-pro 폴더(SKILL.md가 있는 폴더)를
-> 코덱스 스킬 폴더(~/.codex/skills/)에 연결해줘. 끝나면 스킬이 잡히는지 확인해줘.
+> 코덱스 스킬 폴더(~/.codex/skills/)에 **매물블로그라는 이름으로** 연결해줘.
+> 끝나면 스킬이 잡히는지 확인해줘.
 
-**성공 확인**: 코덱스에 "naver-realtor-blog-pro 스킬 뭐 하는 거야?"라고
+**성공 확인**: 코덱스에 "매물블로그 스킬 뭐 하는 거야?"라고
 물었을 때 소개가 나오면 설치된 겁니다.
 
 <details>
@@ -53,9 +54,9 @@ cd naver-realtor-blog-pro
 npm install
 npx playwright install chromium
 # 맥: 스킬 폴더에 연결
-ln -s "$(pwd)/naver-realtor-blog-pro" ~/.codex/skills/naver-realtor-blog-pro
+ln -s "$(pwd)/naver-realtor-blog-pro" ~/.codex/skills/매물블로그
 # 윈도우(PowerShell): 복사로 연결
-# Copy-Item -Recurse .\naver-realtor-blog-pro $env:USERPROFILE\.codex\skills\naver-realtor-blog-pro
+# Copy-Item -Recurse .\naver-realtor-blog-pro $env:USERPROFILE\.codex\skills\매물블로그
 ```
 
 업데이트는 저장소 폴더에서 `git pull` 한 번이면 됩니다 (윈도우 복사 방식은
