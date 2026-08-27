@@ -30,6 +30,39 @@
    씁니다. 모르는 값은 비워두거나 "확인 필요"라고 적지, 그럴듯하게 채우지
    않습니다. "역까지 5분" 같은 말도 사장님이 말해주지 않으면 안 씁니다.
 
+## 설치 — 코덱스에게 시키면 됩니다
+
+터미널 명령을 외울 필요 없습니다. 코덱스를 열고 아래를 그대로 붙여넣으세요:
+
+> 이 깃허브 스킬을 설치해줘: https://github.com/Dr-Min/naver-realtor-blog-pro
+> 적당한 폴더에 받아서 npm install 하고 npx playwright install chromium까지 해줘.
+> 그리고 저장소 안의 naver-realtor-blog-pro 폴더(SKILL.md가 있는 폴더)를
+> 코덱스 스킬 폴더(~/.codex/skills/)에 연결해줘. 끝나면 스킬이 잡히는지 확인해줘.
+
+**성공 확인**: 코덱스에 "naver-realtor-blog-pro 스킬 뭐 하는 거야?"라고
+물었을 때 소개가 나오면 설치된 겁니다.
+
+<details>
+<summary>직접 설치하고 싶다면 (터미널 명령)</summary>
+
+필요한 것: [Node.js](https://nodejs.org) 18 이상, git.
+
+```bash
+git clone https://github.com/Dr-Min/naver-realtor-blog-pro.git
+cd naver-realtor-blog-pro
+npm install
+npx playwright install chromium
+# 맥: 스킬 폴더에 연결
+ln -s "$(pwd)/naver-realtor-blog-pro" ~/.codex/skills/naver-realtor-blog-pro
+# 윈도우(PowerShell): 복사로 연결
+# Copy-Item -Recurse .\naver-realtor-blog-pro $env:USERPROFILE\.codex\skills\naver-realtor-blog-pro
+```
+
+업데이트는 저장소 폴더에서 `git pull` 한 번이면 됩니다 (윈도우 복사 방식은
+복사를 한 번 더).
+
+</details>
+
 ## 처음 한 번만 하는 준비 2가지
 
 ### ① 네이버 로그인 (약 2주에 한 번)
