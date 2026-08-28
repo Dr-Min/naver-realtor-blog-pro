@@ -50,6 +50,16 @@ When the user supplies office facts the profile lacks (사무소명, 중개사�
 those fields, so later runs stop asking. Say so in one line. Do not touch
 fields this skill does not use.
 
+**When BOTH the profile and the user's message lack the office facts, ask —
+do not silently skip.** A listing post exists to make the phone ring; the
+contact path is a material fact (measured: the first live run shipped a
+draft with no contact anywhere). Fold it into the **single consolidated
+Stage 0 question**, before any long work starts: 사무소명·중개사 성함·상담
+전화 (+ any missing material listing facts) in one message, with a note
+that answering once means never being asked again. If the user says 없이
+해줘, proceed and note the omission in one line. Never pause for this again
+mid-run.
+
 Branch on the input:
 
 - **매물번호** (digits, e.g. 2645188091): run
