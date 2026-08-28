@@ -37,10 +37,16 @@
 터미널 명령을 외울 필요 없습니다. 코덱스를 열고 아래를 그대로 붙여넣으세요:
 
 > 이 깃허브 스킬을 설치해줘: https://github.com/Dr-Min/naver-realtor-blog-pro
+> 혹시 git이나 Node.js가 컴퓨터에 없으면 그것부터 설치하게 도와줘.
 > 적당한 폴더에 받아서 npm install 하고 npx playwright install chromium까지 해줘.
 > 그리고 저장소 안의 naver-realtor-blog-pro 폴더(SKILL.md가 있는 폴더)를
 > 코덱스 스킬 폴더(~/.codex/skills/naver-realtor-blog-pro)에 링크해줘.
 > 폴더 이름은 바꾸지 말고, 스킬 카드와 Playwright가 둘 다 정상인지 확인해줘.
+
+설치하는 동안 내려받는 것 (처음 한 번, 5–10분): **깃허브의 스킬
+본체**(설명서+전송 프로그램, 업데이트도 여기서), **전송 프로그램
+부품**(npm install), 그리고 **전용 브라우저**(playwright chromium —
+사장님 크롬과 분리된 도구용 크롬, 수백 MB라 이 단계가 제일 깁니다).
 
 **성공 확인**: 코덱스 입력창에 `$매물`을 입력했을 때
 `네이버 매물블로그` 카드가 나오면 설치된 겁니다. 한글 표시명은
