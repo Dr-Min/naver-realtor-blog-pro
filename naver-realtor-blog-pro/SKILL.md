@@ -46,16 +46,19 @@ Read the shared profile first (`scripts/profile.mjs`; office name, realtor
 name, phone, prohibited claims). Missing profile never blocks a run.
 
 When the user supplies office facts the profile lacks (사무소명, 중개사명,
-상담 전화), **edit `~/.codex/naver-realtor-blog/profile.yaml` now** and fill
-those fields, so later runs stop asking. Say so in one line. Do not touch
-fields this skill does not use.
+상담 전화, **네이버 블로그 아이디**), **edit
+`~/.codex/naver-realtor-blog/profile.yaml` now** and fill those fields
+(blog id goes under `office.blog_id` — add the key if absent), so later
+runs stop asking. Say so in one line. Do not touch fields this skill does
+not use. The transfer step reads `office.blog_id` when the user did not
+name a blog in this run.
 
 **When BOTH the profile and the user's message lack the office facts, ask —
 do not silently skip.** A listing post exists to make the phone ring; the
 contact path is a material fact (measured: the first live run shipped a
 draft with no contact anywhere). Fold it into the **single consolidated
 Stage 0 question**, before any long work starts: 사무소명·중개사 성함·상담
-전화 (+ any missing material listing facts) in one message, with a note
+전화·블로그 아이디 (+ any missing material listing facts) in one message, with a note
 that answering once means never being asked again. If the user says 없이
 해줘, proceed and note the omission in one line. Never pause for this again
 mid-run.
