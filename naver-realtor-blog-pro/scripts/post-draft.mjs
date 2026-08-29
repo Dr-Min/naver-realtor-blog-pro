@@ -420,15 +420,20 @@ try {
       // 긴 주소("서울시 강남구 …")는 검색이 빗나간다(실측) — 결과가 없으면
       // 질의를 뒤에서 두 단어(동·건물명 수준)로 줄여 한 번 재검색한다.
       const popup = page.locator(".se-popup-placesMap");
+      // 결과 매칭 바늘은 질의에서 가장 긴 단어 — 실측: 마지막 단어는
+      // "2차"처럼 무의미한 꼬리가 걸려 매칭이 통째로 빗나간다.
+      const longestWord = (q) => q.split(" ").filter(Boolean).sort((a, b) => b.length - a.length)[0] || q;
       const pickResult = async (q) => {
-        const needle = q.split(" ").filter(Boolean).slice(-1)[0] || q;
-        await popup.locator("li").filter({hasText: needle}).first().click({timeout: 5000});
+        await popup.locator("li").filter({hasText: longestWord(q)}).first().click({timeout: 5000});
       };
       try {
         await pickResult(c.op.query);
       } catch {
-        const short = c.op.query.split(" ").filter(Boolean).slice(-2).join(" ");
-        if (!short || short === c.op.query) throw new Error("no place result for query");
+        // 재시도 질의: 뒤 두 단어 → 원문과 같아지면(짧은 질의) 가장 긴 단어 하나로.
+        // 실측: "코오롱싸이언스밸리 2차"는 두 단어라 기존 로직에선 재시도가 아예 안 됐다.
+        let short = c.op.query.split(" ").filter(Boolean).slice(-2).join(" ");
+        if (!short || short === c.op.query) short = longestWord(c.op.query);
+        if (short === c.op.query) throw new Error("no place result for query");
         result.warnings.push(`place search retried with shorter query '${short}'`);
         await box.fill(short);
         await page.keyboard.press("Enter");
@@ -457,6 +462,22 @@ try {
         result.warnings.push("place panel could not be closed; later steps may be blocked");
       }
     }
+  }
+
+  // 컴포넌트 삽입이 어디서 실패했든, 남은 @@IMG/@@MAP 플레이스홀더 줄은
+  // 저장 전에 비운다 — 실측(ZIP 설치 테스트): 지도 실패 시 토큰이 글자
+  // 그대로 저장돼 발행 글에 노출될 뻔했다. 실패해도 저장은 막지 않는다.
+  for (let t = 0; t < comps.length + 1; t += 1) {
+    const leftover = page.locator(SEL.body_para).filter({hasText: /@@(?:IMG|MAP):\d+@@/}).first();
+    if (!(await leftover.isVisible().catch(() => false))) break;
+    try {
+      await leftover.click({timeout: 2000});
+      await page.keyboard.press("Home");
+      await page.keyboard.press("Shift+End");
+      await page.keyboard.press("Delete");
+      await page.waitForTimeout(300);
+      result.warnings.push("leftover component placeholder line cleared before save");
+    } catch { break; }
   }
 
   // 7) 저장 전 결정론 검사 — 화면 왕복 없이 DOM으로.
