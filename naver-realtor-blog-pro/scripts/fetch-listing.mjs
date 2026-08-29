@@ -24,7 +24,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import {chromium, devices} from "playwright";
+import {loadPlaywright} from "./lib/deps.mjs";
+const {chromium, devices} = await loadPlaywright();
 
 function argsOf(argv) {
   const out = {};

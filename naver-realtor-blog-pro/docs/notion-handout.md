@@ -106,11 +106,12 @@
 ```
 이 깃허브 스킬을 설치해줘: https://github.com/Dr-Min/naver-realtor-blog-pro
 혹시 git이나 Node.js가 컴퓨터에 없으면 그것부터 설치하게 도와줘.
-적당한 폴더에 받아서 npm install 하고 npx playwright install chromium까지 해줘.
-그리고 저장소 안의 naver-realtor-blog-pro 폴더(SKILL.md가 있는 폴더)를
+받은 저장소 폴더에서 npm install 해주고, 안의 naver-realtor-blog-pro 폴더를
 코덱스 스킬 폴더(~/.codex/skills/)에 매물블로그라는 이름으로 연결해줘.
 끝나면 스킬이 잡히는지 확인해줘.
 ```
+
+문장을 다 못 붙여넣어도 괜찮습니다 — **"이 깃허브 스킬 설치해줘: 주소" 한 줄만 해도 됩니다.** 부품이 빠진 채 설치되면 첫 실행 때 스킬이 알아채고 스스로 설치한 뒤 이어서 진행합니다 (처음 한 번, 몇 분).
 
 **설치하는 동안 뭘 내려받나요** (처음 한 번, 5–10분):
 
@@ -133,7 +134,7 @@
 
 ```
 방금 압축 푼 매물블로그 스킬 폴더가 여기 있어: (압축 푼 폴더를 끌어다 놓으세요)
-이 폴더에서 npm install 하고 npx playwright install chromium까지 해줘.
+이 폴더에서 npm install 해줘 (전용 브라우저까지 자동으로 설치돼).
 그리고 안에 있는 naver-realtor-blog-pro 폴더(SKILL.md가 있는 폴더)를
 코덱스 스킬 폴더(~/.codex/skills/)에 매물블로그라는 이름으로 연결해줘.
 끝나면 스킬이 잡히는지 확인해줘.

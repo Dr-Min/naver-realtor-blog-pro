@@ -5,10 +5,13 @@
   "description": "Fast frame + listing-number input, generated images, table draft, and deterministic script transfer to Naver draft.",
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "postinstall": "playwright install chromium"
   },
   "dependencies": {
     "playwright": "^1.49.0"
   },
-  "engines": {"node": ">=18"}
+  "engines": {
+    "node": ">=18"
+  }
 }

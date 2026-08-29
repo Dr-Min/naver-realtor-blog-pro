@@ -11,7 +11,8 @@
 
 import os from "node:os";
 import path from "node:path";
-import {chromium} from "playwright";
+import {loadPlaywright} from "./lib/deps.mjs";
+const {chromium} = await loadPlaywright();
 import {hasNaverLoginCookie, verifyLoginPersistence} from "./login-persistence.mjs";
 
 const PROFILE = path.join(os.homedir(), ".codex", "naver-realtor-blog", "browser-profile");

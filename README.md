@@ -39,15 +39,17 @@
 
 > 이 깃허브 스킬을 설치해줘: https://github.com/Dr-Min/naver-realtor-blog-pro
 > 혹시 git이나 Node.js가 컴퓨터에 없으면 그것부터 설치하게 도와줘.
-> 적당한 폴더에 받아서 npm install 하고 npx playwright install chromium까지 해줘.
-> 그리고 저장소 안의 naver-realtor-blog-pro 폴더(SKILL.md가 있는 폴더)를
-> 코덱스 스킬 폴더(~/.codex/skills/naver-realtor-blog-pro)에 링크해줘.
-> 폴더 이름은 바꾸지 말고, 스킬 카드와 Playwright가 둘 다 정상인지 확인해줘.
+> 받은 저장소 폴더에서 npm install 해주고, 안의 naver-realtor-blog-pro 폴더를
+> 코덱스 스킬 폴더(~/.codex/skills/)에 같은 이름으로 링크해줘.
+
+문장을 다 못 붙여넣어도 괜찮습니다 — **"이 깃허브 스킬 설치해줘: 주소" 한
+줄만 해도 됩니다.** 부품이 빠진 채 설치되면 첫 실행 때 스킬이 알아채고
+스스로 설치한 뒤 이어서 진행합니다 (처음 한 번, 몇 분).
 
 설치하는 동안 내려받는 것 (처음 한 번, 5–10분): **깃허브의 스킬
-본체**(설명서+전송 프로그램, 업데이트도 여기서), **전송 프로그램
-부품**(npm install), 그리고 **전용 브라우저**(playwright chromium —
-사장님 크롬과 분리된 도구용 크롬, 수백 MB라 이 단계가 제일 깁니다).
+본체**(설명서+전송 프로그램, 업데이트도 여기서)와 **전송 프로그램
+부품+전용 브라우저**(`npm install` 한 번에 둘 다 자동 — 전용 브라우저는
+사장님 크롬과 분리된 도구용 크롬이고, 수백 MB라 이 단계가 제일 깁니다).
 
 **성공 확인**: 코덱스 입력창에 `$매물`을 입력했을 때
 `네이버 매물블로그` 카드가 나오면 설치된 겁니다. 한글 표시명은
@@ -62,8 +64,7 @@
 ```bash
 git clone https://github.com/Dr-Min/naver-realtor-blog-pro.git
 cd naver-realtor-blog-pro
-npm install
-npx playwright install chromium
+npm install   # 전용 브라우저(chromium)까지 자동 설치됩니다
 # macOS/Linux
 ln -s "$(pwd)/naver-realtor-blog-pro" ~/.codex/skills/naver-realtor-blog-pro
 ```

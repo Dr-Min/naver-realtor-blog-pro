@@ -183,6 +183,13 @@ Interpret the JSON honestly:
   human to check `로그인 상태 유지`; otherwise rerun the transfer. The user
   should not need to type any command.
 - `UNVERIFIED` — say the click happened but no reliable signal was seen.
+- `SETUP_REQUIRED` — the skill was installed without its parts (this happens
+  when someone installs with a short "스킬 설치해줘" request). **Fix it yourself,
+  do not ask the user**: run `npm install` in the repository root (the folder
+  with `package.json`) — its postinstall installs the chromium browser too —
+  then rerun the exact same command once. If only the browser is missing, run
+  `npx playwright install chromium` instead. Tell the user in one line that
+  first-time parts are being installed (a few minutes, one time only).
 - `FAILED` — follow the retry protocol below, in this order, before ending:
   1. If the browser died at launch (log shows `Crashpad … Permission denied`
      or the script never reached the editor), that is a sandbox permission
