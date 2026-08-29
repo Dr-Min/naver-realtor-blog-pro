@@ -3,247 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이 자동화는 레고입니다 — 노드맵 · naver-realtor-blog-pro</title>
+<title>상세 노드맵 — 무슨 일이 언제 일어나는가 · naver-realtor-blog-pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --paper: #f5f5f5; --paper-2: #fafafa; --ink: #2d3142; --muted: #4f5d75;
-    --soft: #7a8399; --rule: rgba(45,49,66,0.12); --accent: #eb6c36;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--paper); color: var(--ink);
-    font-family: 'Geist', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-    padding: 3rem 2rem; max-width: 1360px; margin: 0 auto;
-  }
-  .eyebrow {
-    font-family: 'Geist Mono', monospace; font-size: 0.75rem; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
-  }
-  h1 { font-family: 'Instrument Serif', 'Apple SD Gothic Neo', serif; font-size: 1.75rem; font-weight: 400; margin-bottom: 0.5rem; }
-  .subtitle { color: var(--muted); font-size: 0.9rem; max-width: 58rem; line-height: 1.6; margin-bottom: 2rem; }
-  .diagram { margin-bottom: 2.5rem; }
-  .diagram svg { width: 100%; max-width: 1240px; height: auto; display: block; }
-  .cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
-  .card { background: #ffffff; border: 1px solid var(--rule); border-radius: 6px; padding: 1.25rem; }
-  .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
-  .card-dot { width: 9px; height: 9px; border-radius: 2px; }
-  .card-dot.coral { background: var(--accent); }
-  .card-dot.dashed { background: transparent; border: 1.5px dashed var(--muted); }
-  .card-dot.ink { background: var(--ink); }
-  .card h3 { font-size: 0.95rem; font-weight: 600; }
-  .card ul { list-style: none; }
-  .card li { font-size: 0.82rem; color: var(--muted); line-height: 1.7; padding-left: 1rem; position: relative; }
-  .card li::before { content: "—"; position: absolute; left: 0; color: var(--soft); }
-  .card li strong { color: var(--ink); font-weight: 600; }
-  .aside {
-    font-family: 'Instrument Serif', 'Apple SD Gothic Neo', serif; font-style: italic;
-    font-size: 1rem; color: var(--muted); border-left: 2px solid var(--accent);
-    padding-left: 1rem; margin: 1.5rem 0; max-width: 58rem; line-height: 1.7;
-  }
-  footer {
-    border-top: 1px solid var(--rule); padding-top: 1rem; margin-top: 1rem;
-    font-family: 'Geist Mono', monospace; font-size: 0.7rem; color: var(--soft);
-    letter-spacing: 0.06em;
-  }
+  :root { --paper:#f5f5f5; --ink:#2d3142; --muted:#4f5d75; --soft:#7a8399; --rule:rgba(45,49,66,0.12); --accent:#eb6c36; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--paper); color:var(--ink); font-family:'Geist','Apple SD Gothic Neo','Noto Sans KR',sans-serif; padding:3rem 2rem; max-width:1360px; margin:0 auto; }
+  .eyebrow { font-family:'Geist Mono',monospace; font-size:0.75rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
+  h1 { font-family:'Instrument Serif','Apple SD Gothic Neo',serif; font-size:1.75rem; font-weight:400; margin-bottom:0.5rem; }
+  .subtitle { color:var(--muted); font-size:0.9rem; max-width:58rem; line-height:1.6; margin-bottom:2rem; }
+  .diagram svg { width:100%; max-width:1240px; height:auto; display:block; }
+  .aside { font-family:'Instrument Serif','Apple SD Gothic Neo',serif; font-style:italic; font-size:1rem; color:var(--muted); border-left:2px solid var(--accent); padding-left:1rem; margin:1.5rem 0; max-width:58rem; line-height:1.7; }
+  footer { border-top:1px solid var(--rule); padding-top:1rem; margin-top:1rem; font-family:'Geist Mono',monospace; font-size:0.7rem; color:var(--soft); letter-spacing:0.06em; }
 </style>
 </head>
 <body>
-
-<p class="eyebrow">NAVER-REALTOR-BLOG-PRO · 커스터마이징 지도</p>
-<h1>이 자동화는 레고입니다 — 부품(노드) 하나하나를 넣고 빼고 갈아끼우세요</h1>
-<p class="subtitle">위에서 아래로, AI가 실제로 일하는 순서 그대로입니다. 행동 하나하나가 독립된 부품이고 —
-주황 테두리는 다른 부품으로 갈아끼우는 자리, 점선은 빼도 되는 부품, 진한 실선은 항상 돌아야 하는 심장입니다.
-이 지도에서 자기만의 조합을 찾는 것이 커스터마이징입니다.</p>
-
+<p class="eyebrow">NAVER-REALTOR-BLOG-PRO · 상세 노드맵</p>
+<h1>무슨 일이 언제 일어나는가 — 노드 24개 전부</h1>
+<p class="subtitle">위에서 아래로, 실제로 일어나는 순서 그대로입니다. 맨 위 셋업 3개는 처음 한 번만 —
+그 뒤로는 매 실행이 04번부터 돕니다. 색은 “누가 하느냐”입니다: 주황은 사장님 손이 필요한 순간(24개 중 4곳뿐),
+실선은 코덱스 AI가 보고 판단하는 노드, 점선은 프로그램이 도는 구간(AI 비용 0)입니다.</p>
 <div class="diagram">
-<svg viewBox="0 0 1240 1930" xmlns="http://www.w3.org/2000/svg" font-family="Geist, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
-
-  <!-- 범례 -->
-  <g transform="translate(50, 18)">
-    <rect x="0" y="0" width="26" height="16" rx="3" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
-    <text x="34" y="13" font-size="13" fill="#2d3142" font-weight="600">코어</text>
-    <text x="72" y="13" font-size="12.5" fill="#4f5d75">— 빼면 정체성이 깨짐</text>
-
-    <rect x="300" y="0" width="26" height="16" rx="3" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="5 4"/>
-    <text x="334" y="13" font-size="13" fill="#2d3142" font-weight="600">옵션</text>
-    <text x="372" y="13" font-size="12.5" fill="#4f5d75">— 빼도 끝까지 돎</text>
-
-    <rect x="580" y="0" width="26" height="16" rx="3" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
-    <text x="614" y="13" font-size="13" fill="#2d3142" font-weight="600">교체 슬롯</text>
-    <text x="682" y="13" font-size="12.5" fill="#4f5d75">— 갈아끼우는 자리 (여러분의 놀이터)</text>
-  </g>
-
-  <defs>
-    <marker id="arr" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="8" markerHeight="8" orient="0">
-      <path d="M 1 0 L 5 8 L 9 0" fill="none" stroke="#7a8399" stroke-width="1.6"/>
-    </marker>
-  </defs>
-
-  <!-- 세로 노드: y = 70 + i*158, 카드 1140×118 (x=50) -->
-
-  <!-- 01 입력 (교체) -->
-  <g transform="translate(50,70)">
-    <rect width="1140" height="118" rx="8" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36" letter-spacing="1">01 · 교체 슬롯</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">입력 받기</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">매물번호 · 링크 · 말로 설명 · 사진 폴더 — 뭐든 던지면</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">알아서 해석하고, 따로따로 와도 한 판으로 합칩니다</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36">바꾸면? 엑셀 매물장,</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36">카톡 캡처, 음성 메모</text>
-  </g>
-  <line x1="620" y1="188" x2="620" y2="222" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 02 매물 수집 (옵션) -->
-  <g transform="translate(50,228)">
-    <rect width="1140" height="118" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399" letter-spacing="1">02 · 옵션</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">매물 정보 수집</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">번호나 링크가 오면 그 페이지의 사실과 등록된 사진</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">전부를 통째로 수확합니다 (예상 N장 → 저장 N장 보고)</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399">빼면? 말로 설명한</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399">사실만으로 진행</text>
-  </g>
-  <line x1="620" y1="346" x2="620" y2="380" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 03 사진 판독 (코어) -->
-  <g transform="translate(50,386)">
-    <rect width="1140" height="118" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75" letter-spacing="1">03 · 코어</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">사진 판독</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">사진을 한 장씩 직접 열어 외관·내부·화장실을 눈으로</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">확인하고 라벨을 답니다 — 이 라벨이 챕터를 결정합니다</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75">사진이 없으면 이 노드는</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75">조용히 건너뜁니다</text>
-  </g>
-  <line x1="620" y1="504" x2="620" y2="538" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 04 원고 작성 (코어) -->
-  <g transform="translate(50,544)">
-    <rect width="1140" height="118" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75" letter-spacing="1">04 · 코어</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">원고 작성</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">사진에 맞춰 챕터를 만들고 핵심 조건 표·태그까지 초안</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">완성 — 아는 사실만 쓰고, 모르는 값은 비웁니다</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75">지어내지 않기 — 이건</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75">계약이라 못 뺍니다</text>
-  </g>
-  <line x1="620" y1="662" x2="620" y2="696" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 05 말투 (교체) -->
-  <g transform="translate(50,702)">
-    <rect width="1140" height="118" rx="8" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36" letter-spacing="1">05 · 교체 슬롯</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">말투 입히기</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">기본은 담백한 합니다체 — 설정 파일(profile.yaml)</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">한 줄로 갈아끼웁니다</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36">바꾸면? 친근형·정보형</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36">·내 블로그 문체 학습</text>
-  </g>
-  <line x1="620" y1="820" x2="620" y2="854" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 06 이미지 생성 (옵션) -->
-  <g transform="translate(50,860)">
-    <rect width="1140" height="118" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399" letter-spacing="1">06 · 옵션</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">이미지 생성</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">글 맨 위 썸네일 + 맨 아래 전화 배너를 코덱스 내장</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">imagen이 그립니다 (추가 결제 없음, 배너는 재사용)</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399">빼면? 글은 그대로,</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399">이미지 2장만 없어짐</text>
-  </g>
-  <line x1="620" y1="978" x2="620" y2="1012" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 07 기계 검증 (코어) -->
-  <g transform="translate(50,1018)">
-    <rect width="1140" height="118" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75" letter-spacing="1">07 · 코어</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">기계 검증</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">AI 기분이 아니라 코드가 형식·과장 표현을 매번 같은</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">잣대로 검사합니다 — 실패하면 딱 한 번 고치고 재검사</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75">빼면? 품질이 그날</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75">운에 좌우됩니다</text>
-  </g>
-  <line x1="620" y1="1136" x2="620" y2="1170" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 08 전송 (교체) -->
-  <g transform="translate(50,1176)">
-    <rect width="1140" height="118" rx="8" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36" letter-spacing="1">08 · 교체 슬롯</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">옮겨 적기 (전송)</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">전송 프로그램이 네이버 편집기에 수 초 만에 타이핑</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">— 이 구간은 AI를 안 써서 비용이 0입니다</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36">바꾸면? 인스타·당근</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#eb6c36">·문자 발송·다른 채널</text>
-  </g>
-  <line x1="620" y1="1294" x2="620" y2="1328" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 09 지도 (옵션) -->
-  <g transform="translate(50,1334)">
-    <rect width="1140" height="118" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399" letter-spacing="1">09 · 옵션</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">지도 붙이기</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">위치 장에 네이버 장소 블록을 붙입니다 — 독자가</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">탭하면 길찾기로 연결되는 진짜 지도 컴포넌트</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399">빼도 저장은</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#7a8399">그대로 진행</text>
-  </g>
-  <line x1="620" y1="1452" x2="620" y2="1486" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/>
-
-  <!-- 10 임시저장·보고 (코어) -->
-  <g transform="translate(50,1492)">
-    <rect width="1140" height="118" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2.5"/>
-    <text x="24" y="36" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75" letter-spacing="1">10 · 코어</text>
-    <text x="24" y="74" font-size="19" font-weight="600" fill="#2d3142">임시저장·보고</text>
-    <text x="330" y="52" font-size="13.5" fill="#4f5d75">발행은 절대 안 누릅니다. 글 개수 N→N+1 같은 숫자</text>
-    <text x="330" y="76" font-size="13.5" fill="#4f5d75">증거로만 성공을 보고합니다 — 발행 버튼은 사장님 손에</text>
-    <text x="850" y="52" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75">안전과 신뢰의 핵심 —</text>
-    <text x="850" y="74" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75">어떤 조합에서도 유지</text>
-  </g>
-
-  <!-- 하단 띠: 코어 계약 -->
-  <g transform="translate(50, 1660)">
-    <rect width="1140" height="200" rx="8" fill="rgba(45,49,66,0.05)" stroke="rgba(45,49,66,0.12)"/>
-    <text x="24" y="40" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75" letter-spacing="1.5">코어 계약 — 어떤 조합으로 조립해도 이 여섯은 산다</text>
-    <text x="24" y="78" font-size="14.5" fill="#2d3142">사실 무결성 (지어내지 않음) · 권한 경계 (비밀번호·발행 금지) · 단일 원본 (원고 파일 하나)</text>
-    <text x="24" y="106" font-size="14.5" fill="#2d3142">기계 검증 · 정직한 종료 (SAVED/UNVERIFIED/BLOCKED/FAILED) · 무중단 완주</text>
-    <text x="24" y="146" font-size="13" fill="#4f5d75">이 여섯 개만 지키면, 나머지는 전부 여러분 마음대로입니다. 여기 없는 방향으로 가도 됩니다.</text>
-    <text x="24" y="174" font-family="Geist Mono, monospace" font-size="11.5" fill="#7a8399">check-core.mjs가 기계로 검사합니다</text>
-  </g>
+<svg viewBox="0 0 1240 3250" xmlns="http://www.w3.org/2000/svg" font-family="Geist, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="8" markerHeight="8" orient="0">
+<path d="M 1 0 L 5 8 L 9 0" fill="none" stroke="#7a8399" stroke-width="1.6"/></marker></defs>
+<g transform="translate(50, 14)">
+<rect x="0" y="0" width="26" height="16" rx="3" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
+<text x="34" y="13" font-size="13" fill="#2d3142" font-weight="600">사장님</text>
+<text x="88" y="13" font-size="12.5" fill="#4f5d75">— 사람 손이 필요한 순간 (전체 24개 중 4곳)</text>
+<rect x="430" y="0" width="26" height="16" rx="3" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="464" y="13" font-size="13" fill="#2d3142" font-weight="600">코덱스 AI</text>
+<text x="536" y="13" font-size="12.5" fill="#4f5d75">— AI가 보고 판단하는 노드</text>
+<rect x="790" y="0" width="26" height="16" rx="3" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="824" y="13" font-size="13" fill="#2d3142" font-weight="600">프로그램</text>
+<text x="896" y="13" font-size="12.5" fill="#4f5d75">— 코드가 도는 구간 (AI 비용 0)</text>
+</g>
+<line x1="50" y1="64" x2="1190" y2="64" stroke="rgba(45,49,66,0.18)" stroke-width="1"/><text x="50" y="94" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75" letter-spacing="1.5">셋업 — 처음 한 번만 (이후엔 다시 안 합니다)</text><g transform="translate(50,122)">
+<rect width="1140" height="84" rx="8" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#eb6c36">01</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">스킬 설치</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">설치 문장 한 번 붙여넣으면 코덱스가 저장소·부품·전용</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">브라우저까지 알아서 설치합니다 (처음 5–10분)</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(235,108,54,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#eb6c36" text-anchor="middle">사장님</text>
+</g><line x1="620" y1="209" x2="620" y2="228" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,232)">
+<rect width="1140" height="84" rx="8" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#eb6c36">02</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">네이버 로그인</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">도구가 띄워주는 창에서 로그인만 — 로그인 상태 유지 체크,</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">약 2주 유지. 브라우저 재시작 후 생존까지 확인합니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(235,108,54,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#eb6c36" text-anchor="middle">사장님</text>
+</g><line x1="620" y1="319" x2="620" y2="338" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,342)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">03</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">사무소 정보 저장</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">사무소명·성함·전화·블로그 아이디를 설정 파일(profile.yaml)에</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">기록 — 다음 매물부터는 다시 묻지 않습니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="50" y1="464" x2="1190" y2="464" stroke="rgba(45,49,66,0.18)" stroke-width="1"/><text x="50" y="494" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75" letter-spacing="1.5">1단계 — 입력과 수집 (여기부터 매 실행)</text><g transform="translate(50,522)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">04</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">입력 해석</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">매물번호·링크·말로 설명·사진 폴더를 구분해 진행 경로 결정</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 따로따로 와도 한 판으로 합칩니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="620" y1="609" x2="620" y2="628" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,632)">
+<rect width="1140" height="84" rx="8" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#eb6c36">05</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">부족분 질문 (필요할 때만)</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">매물 특정이 안 될 때만 시작 시점에 한 번에 모아 질문</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 이 지점 이후로는 끝까지 멈추지 않습니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(235,108,54,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#eb6c36" text-anchor="middle">사장님</text>
+</g><line x1="620" y1="719" x2="620" y2="738" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,742)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">06</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">실행 폴더 생성</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">글 하나 = 폴더 하나 (outputs/날짜/매물명)</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 두 매물이 섞이는 사고를 원천 차단합니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="620" y1="829" x2="620" y2="848" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,852)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">07</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">매물 정보 수집</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">번호·링크면 그 페이지의 사실과 갤러리 사진 전부를 수확</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— “예상 N장 → 저장 N장” 숫자로 보고합니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="50" y1="974" x2="1190" y2="974" stroke="rgba(45,49,66,0.18)" stroke-width="1"/><text x="50" y="1004" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75" letter-spacing="1.5">2단계 — 원고와 이미지</text><g transform="translate(50,1032)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">08</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">사진 판독</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">사진을 한 장씩 직접 열어 외관·내부·화장실을 눈으로 확인,</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">라벨 파일 기록 — 사진마다 설명을 적어줄 필요 없습니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="620" y1="1119" x2="620" y2="1138" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,1142)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">09</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">챕터 설계</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">사진 라벨과 매물 유형이 챕터를 결정합니다</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 없는 공간의 챕터는 만들지 않습니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="620" y1="1229" x2="620" y2="1248" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,1252)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">10</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">원고 작성</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">본문·핵심 조건 표·태그·지도 앵커까지 초안 완성</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 아는 사실만 쓰고, 모르는 값은 비웁니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="620" y1="1339" x2="620" y2="1358" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,1362)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">11</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">말투 입히기</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">담백형(기본)·친근형·정보형 프리셋 또는 학습된 내 문체</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 설정 파일 한 줄로 바뀝니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="620" y1="1449" x2="620" y2="1468" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,1472)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">12</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">썸네일 생성</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">매물명+사무소명이 박힌 대표 이미지를 내장 imagen으로</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">그립니다 — 별도 프로그램·추가 결제 없음</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="620" y1="1559" x2="620" y2="1578" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,1582)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">13</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">전화 배너 준비</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">전화번호 큼직한 상담 배너 — 처음 한 번 만들면</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">다음 매물부터는 계속 재사용합니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="620" y1="1669" x2="620" y2="1688" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,1692)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">14</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">기계 검증 + 원고 잠금</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">형식·과장 표현을 코드가 매번 같은 잣대로 검사 (실패 시 1회</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">수정 후 재검사) — 통과한 원고는 잠겨 유일한 원본이 됩니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="50" y1="1814" x2="1190" y2="1814" stroke="rgba(45,49,66,0.18)" stroke-width="1"/><text x="50" y="1844" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75" letter-spacing="1.5">3단계 — 네이버로 옮겨 적기 (이 구간은 AI를 안 써서 비용 0)</text><g transform="translate(50,1872)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">15</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">로그인 세션 확인</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">로그인이 살아있는지 확인 — 만료면 로그인 창을 띄우고</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">기다렸다가 이어서 진행합니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="620" y1="1959" x2="620" y2="1978" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,1982)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">16</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">편집기 진입</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">새 탭으로 글쓰기 화면 직행 — “작성 중인 글” 복구창이</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">뜨면 취소를 누르고 계속 갑니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="620" y1="2069" x2="620" y2="2088" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,2092)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">17</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">본문 한 번에 붙여넣기</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">제목·본문·표·강조를 단 한 번의 붙여넣기로 전송</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 사진·지도가 들어갈 자리는 표시만 해둡니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="620" y1="2179" x2="620" y2="2198" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,2202)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">18</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">전화 링크 걸기</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">“전화 상담” 줄과 배너 이미지에 탭하면 전화가 걸리는</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">링크(tel:)를 겁니다 — 저장 후 생존까지 실측된 순서로</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="620" y1="2289" x2="620" y2="2308" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,2312)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">19</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">사진 삽입</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">표시해둔 자리마다 해당 사진을 한 장씩 업로드</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 문단과 사진이 어긋나지 않게</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="620" y1="2399" x2="620" y2="2418" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,2422)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">20</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">지도 블록 첨부</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">위치 장에 네이버 장소 컴포넌트를 붙입니다</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 독자가 탭하면 길찾기로 연결</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="620" y1="2509" x2="620" y2="2528" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,2532)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">21</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">저장 전 검사</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">사진·표·지도 개수, 전화 링크, 남은 자리표시 0까지 전부</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">셉니다 — “됐다고 치는” 일이 없게</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="620" y1="2619" x2="620" y2="2638" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,2642)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#7a8399" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75">22</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">임시저장</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">누르는 버튼은 임시저장뿐 (발행을 누르는 코드는 아예 없음)</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">— 글 개수 N→N+1 신호로 저장을 확정합니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(122,131,153,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#4f5d75" text-anchor="middle">프로그램</text>
+</g><line x1="50" y1="2764" x2="1190" y2="2764" stroke="rgba(45,49,66,0.18)" stroke-width="1"/><text x="50" y="2794" font-family="Geist Mono, monospace" font-size="13" fill="#4f5d75" letter-spacing="1.5">마무리</text><g transform="translate(50,2822)">
+<rect width="1140" height="84" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#2d3142">23</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">결과 보고</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">SAVED / UNVERIFIED / BLOCKED / FAILED 넷 중 하나로,</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">숫자 증거와 함께 정직하게 보고합니다</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(45,49,66,0.07)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#2d3142" text-anchor="middle">코덱스 AI</text>
+</g><line x1="620" y1="2909" x2="620" y2="2928" stroke="#7a8399" stroke-width="1.6" marker-end="url(#arr)"/><g transform="translate(50,2932)">
+<rect width="1140" height="84" rx="8" fill="#fdf1ea" stroke="#eb6c36" stroke-width="2"/>
+<text x="24" y="50" font-family="Geist Mono, monospace" font-size="13" fill="#eb6c36">24</text>
+<text x="64" y="52" font-size="16.5" font-weight="600" fill="#2d3142">확인하고 발행</text>
+<text x="356" y="37" font-size="13" fill="#4f5d75">숫자·사진·전화번호 확인 후 발행 버튼 — 글이 세상에</text>
+<text x="356" y="61" font-size="13" fill="#4f5d75">나가는 건 사장님 손으로만</text>
+<rect x="1022" y="28" width="94" height="28" rx="14" fill="rgba(235,108,54,0.12)"/>
+<text x="1069" y="46" font-family="Geist Mono, monospace" font-size="11.5" fill="#eb6c36" text-anchor="middle">사장님</text>
+</g>
+<g transform="translate(50,3052)">
+<rect width="1140" height="168" rx="8" fill="rgba(45,49,66,0.05)" stroke="rgba(45,49,66,0.12)"/>
+<text x="24" y="38" font-family="Geist Mono, monospace" font-size="12" fill="#4f5d75" letter-spacing="1.5">어느 노드를 바꾸든 항상 지켜지는 여섯 가지 (check-core.mjs가 기계로 검사)</text>
+<text x="24" y="76" font-size="14" fill="#2d3142">사실 무결성 (지어내지 않음) · 권한 경계 (비밀번호·발행 금지) · 단일 원본 (원고 파일 하나)</text>
+<text x="24" y="102" font-size="14" fill="#2d3142">기계 검증 · 정직한 종료 (SAVED/UNVERIFIED/BLOCKED/FAILED) · 무중단 완주</text>
+<text x="24" y="140" font-size="12.5" fill="#4f5d75">노드 하나하나가 독립된 부품이라, 이 여섯 가지 위에서라면 어떤 노드든 넣고 빼고 갈아끼울 수 있습니다.</text>
+</g>
 </svg>
 </div>
-
-<div class="cards">
-  <div class="card">
-    <div class="card-header"><span class="card-dot coral"></span><h3>바꿔 끼우면? — 교체 슬롯 3개</h3></div>
-    <ul>
-      <li><strong>입력</strong>을 엑셀 매물장·카톡 캡처로 — "이 행으로 글 써줘"</li>
-      <li><strong>말투</strong>를 내 블로그 글 5개로 학습시켜 내 문체로</li>
-      <li><strong>전송</strong>을 인스타·당근·문자로 — 채널 설명서 한 장만 갈아끼우면 됨</li>
-    </ul>
-  </div>
-  <div class="card">
-    <div class="card-header"><span class="card-dot dashed"></span><h3>빼면? — 옵션 부품 3개</h3></div>
-    <ul>
-      <li><strong>매물 수집</strong> 없이 — 말로 설명한 사실만으로 완주</li>
-      <li><strong>이미지 생성</strong> 없이 — 글과 사진만으로 더 빠르게</li>
-      <li><strong>지도</strong> 없이 — 위치를 글로만. 저장은 그대로 됩니다</li>
-    </ul>
-  </div>
-  <div class="card">
-    <div class="card-header"><span class="card-dot ink"></span><h3>이건 빼지 마세요 — 심장 4개</h3></div>
-    <ul>
-      <li><strong>사진 판독·원고</strong> — 사실만 쓰는 눈과 손</li>
-      <li><strong>기계 검증</strong> — 품질을 운이 아닌 코드에 맡기는 장치</li>
-      <li><strong>임시저장·정직한 보고</strong> — 발행은 사람, 성공은 증거로만</li>
-    </ul>
-  </div>
-</div>
-
-<p class="aside">이 스킬(pro)도 뼈대(fast)에서 노드 세 개 — 입력, 이미지, 전송 — 를 갈아끼워 만든 것입니다.
-여러분은 네 번째 노드를 끼우면 됩니다. 정답이 아니라 부품 상자입니다.</p>
-
-<footer>NAVER-REALTOR-BLOG-PRO · 노드맵 — 코어 6계약은 check-core.mjs가 검사합니다 · github.com/Dr-Min/naver-realtor-blog-pro</footer>
-
+<p class="aside">노드 하나하나가 독립된 부품입니다 — 수업 후반부에서는 이 지도에서 부품을 골라 여러분만의 자동화로
+바꿔봅니다. 이 스킬(pro)도 뼈대(fast)에서 입력·이미지·전송 노드를 갈아끼워 만든 것입니다.</p>
+<footer>NAVER-REALTOR-BLOG-PRO · 상세 노드맵 · github.com/Dr-Min/naver-realtor-blog-pro</footer>
 </body>
 </html>
