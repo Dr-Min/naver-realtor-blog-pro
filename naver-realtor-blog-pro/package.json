@@ -1,0 +1,12 @@
+{
+  "name": "naver-realtor-blog-pro-skill",
+  "private": true,
+  "description": "스킬 폴더 단독 설치(공식 인스톨러 경로)에서도 npm install 한 번으로 전송 부품과 전용 브라우저가 갖춰지게 하는 동봉 매니페스트.",
+  "type": "module",
+  "scripts": {
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}
